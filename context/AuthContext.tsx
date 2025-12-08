@@ -1,0 +1,80 @@
+import { authApi, LoginRequest, RegisterRequest, User } from '@/lib/api';
+import { storage } from '@/lib/storage';
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
+
+interface AuthContextType {
+    user: User | null;
+    isLoading: boolean;
+    signIn: (data: LoginRequest) => Promise<void>;
+    signUp: (data: RegisterRequest) => Promise<void>;
+    signOut: (data?: any) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+
+export function useAuth() {
+    return useContext(AuthContext);
+}
+
+export function AuthProvider({ children }: PropsWithChildren) {
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const checkSession = async () => {
+            try {
+                const token = await storage.getItem('session_token');
+                if (token) {
+                    const { user } = await authApi.me();
+                    setUser(user);
+                }
+            } catch (error) {
+                console.error('Session check failed:', error);
+                await storage.removeItem('session_token');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        checkSession();
+    }, []);
+
+    const signIn = async (data: LoginRequest) => {
+        try {
+            const response = await authApi.login(data);
+            setUser(response.user);
+            // Token is handled by axios interceptor
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    const signUp = async (data: RegisterRequest) => {
+        try {
+            const response = await authApi.register(data);
+            setUser(response.user);
+            // Token is handled by axios interceptor
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    const signOut = async () => {
+        try {
+            await authApi.logout();
+            await storage.removeItem('session_token');
+            setUser(null);
+        } catch (error) {
+            console.error('Sign out failed:', error);
+            // Force logout even if api fails
+            await storage.removeItem('session_token');
+            setUser(null);
+        }
+    };
+
+    return (
+        <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut }}>
+            {children}
+        </AuthContext.Provider>
+    );
+}
