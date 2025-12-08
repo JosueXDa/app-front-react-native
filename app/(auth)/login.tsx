@@ -1,10 +1,12 @@
 import { AuthInput } from '@/components/auth/AuthInput';
+import { useToast } from '@/components/ui/toast';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ToastAlert } from '@/components/auth/ToastAlert';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginScreen() {
@@ -12,10 +14,18 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const { signIn } = useAuth();
+    const toast = useToast();
 
     const handleLogin = async () => {
         if (!email || !password) {
-            Alert.alert('Error', 'Por favor completa todos los campos');
+            toast.show({
+                placement: "top right",
+                render: ({ id }) => {
+                    return (
+                        <ToastAlert id={id} title="Error" description="Por favor completa todos los campos" />
+                    )
+                }
+            })
             return;
         }
 
@@ -25,7 +35,14 @@ export default function LoginScreen() {
             // Navigation is handled by AuthContext
         } catch (error: any) {
             console.error(error);
-            Alert.alert('Error', error.response?.data?.message || 'Error al iniciar sesión');
+            toast.show({
+                placement: "top right",
+                render: ({ id }) => {
+                    return (
+                        <ToastAlert id={id} title="Error" description={error.response?.data?.message || 'Error al iniciar sesión'} />
+                    )
+                }
+            })
         } finally {
             setLoading(false);
         }
