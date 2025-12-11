@@ -51,6 +51,8 @@ export class WebSocketManager {
         this.ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
+                console.log('[WebSocket] Received:', data.type);
+                
                 // Assuming the server sends messages with a 'type' field
                 // Adjust based on actual server message structure
                 if (data.type) {
@@ -87,9 +89,10 @@ export class WebSocketManager {
 
     public sendMessage(type: string, payload: any) {
         if (this.ws?.readyState === WebSocket.OPEN) {
+            console.log('[WebSocket] Sending message:', { type, payload });
             this.ws.send(JSON.stringify({ type, payload }));
         } else {
-            console.warn("WebSocket is not connected. Message not sent.");
+            console.warn("WebSocket is not connected. Message not sent.", { type, payload });
         }
     }
 
