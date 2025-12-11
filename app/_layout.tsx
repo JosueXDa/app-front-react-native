@@ -14,7 +14,7 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import '@/global.css';
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  anchor: '(app)',
 };
 
 function RootLayoutNav() {

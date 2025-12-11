@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { Platform } from "react-native";
 import { storage } from "../storage";
 
 const BASE_URL = process.env.EXPO_PUBLIC_BACK_URL || "http://localhost:3000";
@@ -9,6 +10,7 @@ if (!BASE_URL) {
 
 export const axiosInstance = axios.create({
     baseURL: BASE_URL,
+    withCredentials: true,
     headers: {
         "Content-Type": "application/json",
     },
@@ -16,9 +18,11 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-        const token = await storage.getItem('session_token');
-        if (token) {
-            config.headers.Cookie = `better-auth.session_token=${token}`;
+        if (Platform.OS !== 'web') {
+            const token = await storage.getItem('session_token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         return config;
     },
@@ -29,12 +33,14 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
     async (response: AxiosResponse) => {
-        const setCookie = response.headers['set-cookie'];
-        if (setCookie) {
-            const cookieString = Array.isArray(setCookie) ? setCookie.join(';') : setCookie;
-            const match = cookieString.match(/better-auth\.session_token=([^;]+)/);
-            if (match && match[1]) {
-                await storage.setItem('session_token', match[1]);
+        if (Platform.OS !== 'web') {
+            const setCookie = response.headers['set-cookie'];
+            if (setCookie) {
+                const cookieString = Array.isArray(setCookie) ? setCookie.join(';') : setCookie;
+                const match = cookieString.match(/better-auth\.session_token=([^;]+)/);
+                if (match && match[1]) {
+                    await storage.setItem('session_token', match[1]);
+                }
             }
         }
         return response;

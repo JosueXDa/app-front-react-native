@@ -1,6 +1,7 @@
 import { authApi, LoginRequest, RegisterRequest, User } from '@/lib/api';
 import { storage } from '@/lib/storage';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 
 interface AuthContextType {
     user: User | null;
@@ -23,14 +24,21 @@ export function AuthProvider({ children }: PropsWithChildren) {
     useEffect(() => {
         const checkSession = async () => {
             try {
-                const token = await storage.getItem('session_token');
-                if (token) {
+                if (Platform.OS === 'web') {
                     const { user } = await authApi.me();
                     setUser(user);
+                } else {
+                    const token = await storage.getItem('session_token');
+                    if (token) {
+                        const { user } = await authApi.me();
+                        setUser(user);
+                    }
                 }
             } catch (error) {
                 console.error('Session check failed:', error);
-                await storage.removeItem('session_token');
+                if (Platform.OS !== 'web') {
+                    await storage.removeItem('session_token');
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -62,12 +70,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const signOut = async () => {
         try {
             await authApi.logout();
-            await storage.removeItem('session_token');
+            if (Platform.OS !== 'web') {
+                await storage.removeItem('session_token');
+            }
             setUser(null);
         } catch (error) {
             console.error('Sign out failed:', error);
             // Force logout even if api fails
-            await storage.removeItem('session_token');
+            if (Platform.OS !== 'web') {
+                await storage.removeItem('session_token');
+            }
             setUser(null);
         }
     };

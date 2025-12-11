@@ -41,7 +41,7 @@ export const authApi = {
         return response.data;
     },
     me: async () => {
-        const response = await axiosInstance.get<AuthResponse>("/api/auth/session");
+        const response = await axiosInstance.get<AuthResponse>("/api/auth/get-session");
         return response.data;
     },
     logout: async () => {

@@ -41,3 +41,8 @@ app-example
 # generated native folders
 /ios
 /android
+
+# docs unnnecesary
+MESSAGING_ARCHITECTURE.md
+MESSAGING_IMPLEMENTATION.md
+doc_backend.md

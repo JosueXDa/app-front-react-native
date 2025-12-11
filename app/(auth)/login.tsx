@@ -1,13 +1,13 @@
 import { AuthInput } from '@/components/auth/AuthInput';
+import { GithubLoginButton } from '@/components/auth/GithubLoginButton';
+import { ToastAlert } from '@/components/auth/ToastAlert';
 import { useToast } from '@/components/ui/toast';
+import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { ToastAlert } from '@/components/auth/ToastAlert';
-import { useAuth } from '@/context/AuthContext';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -107,9 +107,7 @@ export default function LoginScreen() {
                         <Pressable className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex-1 items-center">
                             <Ionicons name="logo-google" size={24} color="#DB4437" />
                         </Pressable>
-                        <Pressable className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex-1 items-center">
-                            <Ionicons name="logo-github" size={24} color="#333" />
-                        </Pressable>
+                        <GithubLoginButton />
                     </View>
 
                     <View className="flex-row justify-center">
