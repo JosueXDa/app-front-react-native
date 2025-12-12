@@ -5,12 +5,11 @@ import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import '../global.css';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
+import '@/global.css';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
   anchor: '(app)',
@@ -37,6 +36,7 @@ function RootLayoutNav() {
       // Tiene sesión y quiere ir al login -> Al Dashboard
       router.replace('/(app)');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, segments, isLoading]);
 
   if (isLoading) {

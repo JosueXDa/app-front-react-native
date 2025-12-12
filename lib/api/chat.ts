@@ -5,6 +5,7 @@ export interface Channel {
     name: string;
     description?: string | null;
     isPrivate: boolean;
+    imageUrl?: string | null;
     category?: string;
     ownerId?: string;
     createdAt: string;
@@ -32,6 +33,7 @@ export interface UpdateChannelDto {
     name?: string;
     description?: string | null;
     isPrivate?: boolean;
+    imageUrl?: string | null;
     category?: string;
 }
 

@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
@@ -50,7 +50,7 @@ export default function LoginScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-white dark:bg-gray-950">
-            <ScrollView contentContainerClassName="flex-grow justify-center px-6 py-10">
+            <View className="flex-grow justify-center px-6 py-10">
                 <View className="items-center mb-10">
                     <View className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-full mb-4">
                         <Ionicons name="chatbubbles" size={40} color="#3b82f6" />
@@ -119,7 +119,7 @@ export default function LoginScreen() {
                         </Link>
                     </View>
                 </View>
-            </ScrollView>
+            </View>
         </SafeAreaView>
     );
 }

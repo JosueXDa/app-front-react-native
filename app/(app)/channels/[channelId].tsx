@@ -1,15 +1,12 @@
 import { Avatar } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { useSelectedChannel } from '@/context/SelectedChannelContext';
-import { Channel, Message, createMessage, getMessages } from '@/lib/api/chat';
+import { Channel, createMessage, getChannelById, getMessages, Message } from '@/lib/api/chat';
 import { wsManager } from '@/lib/api/ws';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, MoreVertical, Send } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
-
-interface ChatWindowProps {
-    channel: Channel;
-}
+import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, useWindowDimensions, View } from 'react-native';
 
 interface PendingMessage {
     tempId: string;
@@ -18,29 +15,63 @@ interface PendingMessage {
     retries: number;
 }
 
-export function ChatWindow({ channel }: ChatWindowProps) {
+export default function ChannelScreen() {
+    const { channelId } = useLocalSearchParams<{ channelId: string }>();
+    const router = useRouter();
+    const { width } = useWindowDimensions();
+    const isDesktop = width >= 768;
+    
+    // Primero intentar usar el canal del contexto, luego hacer fetch si no existe
+    const { selectedChannel } = useSelectedChannel();
+    const [channel, setChannel] = useState<Channel | null>(
+        selectedChannel?.id === channelId ? selectedChannel : null
+    );
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     
-    // Cola de mensajes pendientes (máximo 1 envío simultáneo)
     const pendingQueueRef = useRef<PendingMessage[]>([]);
     const isSendingRef = useRef(false);
-    const flatListRef = useRef<FlatList>(null); // 📌 Añadir ref para scroll
+    const flatListRef = useRef<FlatList>(null);
     
-    const { setSelectedChannel } = useSelectedChannel();
     const { user } = useAuth();
 
     const handleBack = () => {
-        setSelectedChannel(null);
-    }
+        router.back();
+    };
+
+    // Fetch channel data - usa el contexto primero, si no coincide hace fetch
+    useEffect(() => {
+        const fetchChannel = async () => {
+            if (!channelId) return;
+            
+            // Si el canal del contexto coincide con el channelId, úsalo directamente
+            if (selectedChannel?.id === channelId) {
+                setChannel(selectedChannel);
+                console.log('[ChannelScreen] Using channel from context:', selectedChannel.name);
+                return;
+            }
+            
+            // Si no, hacer fetch del canal
+            try {
+                console.log('[ChannelScreen] Fetching channel data for:', channelId);
+                const fetchedChannel = await getChannelById(channelId);
+                setChannel(fetchedChannel);
+            } catch (err) {
+                console.error('Failed to fetch channel:', err);
+                setError('Failed to load channel.');
+            }
+        };
+        fetchChannel();
+    }, [channelId, selectedChannel]);
 
     const fetchMessages = useCallback(async () => {
+        if (!channelId) return;
         try {
             setIsLoading(true);
             setError(null);
-            const fetchedMessages = await getMessages(channel.id);
+            const fetchedMessages = await getMessages(channelId);
             setMessages(fetchedMessages);
         } catch (err) {
             console.error('Failed to fetch messages:', err);
@@ -48,17 +79,10 @@ export function ChatWindow({ channel }: ChatWindowProps) {
         } finally {
             setIsLoading(false);
         }
-    }, [channel.id]);
+    }, [channelId]);
 
-    /**
-     * Server-Driven State Synchronization Strategy
-     * 1. Client envía mensaje al servidor SOLAMENTE
-     * 2. Servidor guarda en BD y emite por WebSocket
-     * 3. Cliente actualiza estado SOLO cuando recibe confirmación del servidor
-     * 4. WebSocket es la única fuente de verdad para nuevos mensajes
-     */
     const processPendingQueue = useCallback(async () => {
-        if (isSendingRef.current || pendingQueueRef.current.length === 0 || !user) {
+        if (isSendingRef.current || pendingQueueRef.current.length === 0 || !user || !channelId) {
             return;
         }
 
@@ -71,19 +95,14 @@ export function ChatWindow({ channel }: ChatWindowProps) {
         }
 
         try {
-            // SOLO enviamos al servidor, sin actualizar UI
             const createdMessage = await createMessage({
-                channelId: channel.id,
+                channelId,
                 content: pendingMsg.content
             });
-
-            // El servidor debería emitir el mensaje por WebSocket
-            // que luego será recibido por handleNewMessage
             console.log(`Message ${pendingMsg.tempId} sent, server returned:`, createdMessage.id);
         } catch (err) {
             console.error(`Failed to send message ${pendingMsg.tempId}:`, err);
             
-            // Reintentar hasta 3 veces con backoff exponencial
             if (pendingMsg.retries < 3) {
                 pendingMsg.retries++;
                 const delayMs = Math.pow(2, pendingMsg.retries) * 1000;
@@ -92,33 +111,29 @@ export function ChatWindow({ channel }: ChatWindowProps) {
                     processPendingQueue();
                 }, delayMs);
             } else {
-                // Después de 3 reintentos, mostrar error
                 setError(`Failed to send: "${pendingMsg.content}". Check your connection.`);
-                // Opcionalmente remover del mensaje pendiente de la UI
                 setMessages(prev => 
                     prev.filter(msg => msg.id !== pendingMsg.tempId)
                 );
             }
         } finally {
             isSendingRef.current = false;
-            // Procesar el siguiente mensaje en la cola
             if (pendingQueueRef.current.length > 0) {
                 setTimeout(() => processPendingQueue(), 100);
             }
         }
-    }, [channel.id, user]);
+    }, [channelId, user]);
 
     const handleSend = async () => {
-        if (!message.trim() || !user) return;
+        if (!message.trim() || !user || !channelId) return;
 
         const originalMessage = message.trim();
         const tempId = `temp-${Date.now()}`;
 
-        // SOLAMENTE agregar a UI de forma temporal
         const tempMessage: Message = {
             id: tempId,
             senderId: user.id,
-            channelId: channel.id,
+            channelId,
             content: originalMessage,
             createdAt: new Date().toISOString(),
             sender: {
@@ -128,14 +143,10 @@ export function ChatWindow({ channel }: ChatWindowProps) {
             }
         };
 
-        // 1. Limpiar input inmediatamente
         setMessage('');
-
-        // 2. Mostrar mensaje temporal en la UI
         setMessages(prev => [...prev, tempMessage]);
         setError(null);
 
-        // 3. Agregar a la cola de envío
         pendingQueueRef.current.push({
             tempId,
             content: originalMessage,
@@ -143,25 +154,17 @@ export function ChatWindow({ channel }: ChatWindowProps) {
             retries: 0
         });
 
-        // 4. Procesar la cola
         processPendingQueue();
     };
 
-    /**
-     * Este handler es la ÚNICA forma en que los mensajes nuevos llegan a la UI
-     * después del envío inicial
-     */
     const handleNewMessage = useCallback((newMessage: Message) => {
-        console.log('[ChatWindow] 📨 New message received:', newMessage.id);
+        console.log('[ChannelScreen] 📨 New message received:', newMessage.id);
         setMessages(prev => {
-            // 1. Verificar duplicado por ID real
             if (prev.some(msg => msg.id === newMessage.id)) {
-                console.log('[ChatWindow] ⚠️ Message already exists, skipping');
+                console.log('[ChannelScreen] ⚠️ Message already exists, skipping');
                 return prev;
             }
 
-            // 2. Buscar mensaje temporal para reemplazar
-            // 🔥 FIX: Buscar SOLO por senderId y content (ignorar timestamp)
             const tempIndex = prev.findIndex(
                 msg => msg.id.startsWith('temp-') && 
                 msg.senderId === newMessage.senderId &&
@@ -169,8 +172,7 @@ export function ChatWindow({ channel }: ChatWindowProps) {
             );
 
             if (tempIndex !== -1) {
-                console.log('[ChatWindow] ✅ Replacing temp:', prev[tempIndex].id, '→', newMessage.id);
-                // IMPORTANTE: Crear nuevo array inmutable
+                console.log('[ChannelScreen] ✅ Replacing temp:', prev[tempIndex].id, '→', newMessage.id);
                 return [
                     ...prev.slice(0, tempIndex),
                     newMessage,
@@ -178,11 +180,9 @@ export function ChatWindow({ channel }: ChatWindowProps) {
                 ];
             }
 
-            // 3. Es un mensaje completamente nuevo (de otros usuarios)
-            console.log('[ChatWindow] ➕ Adding new message from other user');
+            console.log('[ChannelScreen] ➕ Adding new message from other user');
             const updated = [...prev, newMessage];
             
-            // 📌 Auto-scroll si es del usuario actual
             if (newMessage.senderId === user?.id) {
                 setTimeout(() => {
                     flatListRef.current?.scrollToEnd({ animated: true });
@@ -193,42 +193,35 @@ export function ChatWindow({ channel }: ChatWindowProps) {
         });
     }, [user?.id]);
 
-    // Setup WebSocket handlers - Subscribe to channel and listen for messages
     useEffect(() => {
+        if (!channelId) return;
+
         let cleanup: (() => void) | null = null;
         let messageHandlerRef: ((data: any) => void) | null = null;
 
         const setupWebSocket = async () => {
             try {
-                // 1. Asegurar que WebSocket está conectado
                 await wsManager.connect();
 
-                // 2. Suscribirse al canal específico
-                console.log(`[WebSocket] Joining channel: ${channel.id}`);
+                console.log(`[WebSocket] Joining channel: ${channelId}`);
                 wsManager.sendMessage('JOIN_CHANNEL', {
-                    channelId: channel.id
+                    channelId
                 });
 
-                // 3. 🔥 FIX: Crear handler UNA SOLA VEZ y guardarlo en ref
                 messageHandlerRef = (data: any) => {
-                    // 🔥 Probar diferentes estructuras posibles del backend
                     let message = null;
                     let receivedChannelId = null;
                     
-                    // Opción 1: data = { message, channelId }
                     if (data.message && data.channelId) {
                         message = data.message;
                         receivedChannelId = data.channelId;
-                    }
-                    // Opción 2: data = mensaje directo (sin wrapper)
-                    else if (data.id && data.content && data.senderId) {
+                    } else if (data.id && data.content && data.senderId) {
                         message = data;
                         receivedChannelId = data.channelId;
                     }
                     
-                    // Validar que sea un mensaje para este canal
-                    if (receivedChannelId === channel.id && message) {
-                        console.log(`[ChatWindow] ✅ Message for this channel`);
+                    if (receivedChannelId === channelId && message) {
+                        console.log(`[ChannelScreen] ✅ Message for this channel`);
                         handleNewMessage(message);
                     }
                 };
@@ -236,13 +229,12 @@ export function ChatWindow({ channel }: ChatWindowProps) {
                 wsManager.on('NEW_MESSAGE', messageHandlerRef);
 
                 cleanup = () => {
-                    // Cleanup: desuscribirse del canal
-                    console.log(`[WebSocket] Leaving channel: ${channel.id}`);
+                    console.log(`[WebSocket] Leaving channel: ${channelId}`);
                     if (messageHandlerRef) {
                         wsManager.off('NEW_MESSAGE', messageHandlerRef);
                     }
                     wsManager.sendMessage('LEAVE_CHANNEL', {
-                        channelId: channel.id
+                        channelId
                     });
                 };
             } catch (error) {
@@ -256,9 +248,17 @@ export function ChatWindow({ channel }: ChatWindowProps) {
         return () => {
             cleanup?.();
         };
-    }, [channel.id, handleNewMessage, fetchMessages]);
+    }, [channelId, handleNewMessage, fetchMessages]);
 
-    return (
+    if (!channel) {
+        return (
+            <View className="flex-1 items-center justify-center bg-[#efeae2] dark:bg-[#0b141a]">
+                <ActivityIndicator size="large" color="#00a884" />
+            </View>
+        );
+    }
+
+    const renderChatContent = () => (
         <View className="flex-1 bg-[#efeae2] dark:bg-[#0b141a]">
             {/* Header */}
             <View className="flex-row items-center justify-between px-4 py-3 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -316,7 +316,7 @@ export function ChatWindow({ channel }: ChatWindowProps) {
                     ref={flatListRef}
                     data={messages}
                     keyExtractor={(item) => item.id}
-                    extraData={messages} // � FIX: Pasar todo el array, no solo length
+                    extraData={messages}
                     contentContainerStyle={{ padding: 16 }}
                     onContentSizeChange={() => {
                         flatListRef.current?.scrollToEnd({ animated: false });
@@ -374,4 +374,31 @@ export function ChatWindow({ channel }: ChatWindowProps) {
             </KeyboardAvoidingView>
         </View>
     );
+
+    // Desktop: incluir espacio para miembros (placeholder)
+    if (isDesktop) {
+        return (
+            <View className="flex-1 flex-row bg-gray-100 dark:bg-gray-900">
+                {/* Main Chat Window */}
+                <View className="flex-1">
+                    {renderChatContent()}
+                </View>
+                
+                {/* Members List Placeholder (futuro) */}
+                <View className="w-64 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700">
+                    <View className="flex-1 items-center justify-center p-4">
+                        <Text className="text-gray-400 dark:text-gray-500 text-center">
+                            Members list
+                        </Text>
+                        <Text className="text-gray-400 dark:text-gray-500 text-xs text-center mt-2">
+                            (Coming soon)
+                        </Text>
+                    </View>
+                </View>
+            </View>
+        );
+    }
+
+    // Mobile: solo el chat
+    return renderChatContent();
 }

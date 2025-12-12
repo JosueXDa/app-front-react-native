@@ -1,3 +1,4 @@
+import { Avatar } from '@/components/ui/avatar';
 import { useChannels } from '@/context/ChannelContex';
 import { Channel, isJoined as checkIsJoined, joinChannel } from '@/lib/api/chat';
 import { useRouter } from 'expo-router';
@@ -16,6 +17,7 @@ export function ChannelCard({ channel }: ChannelCardProps) {
 
     useEffect(() => {
         checkJoinStatus();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const checkJoinStatus = async () => {
@@ -42,11 +44,18 @@ export function ChannelCard({ channel }: ChannelCardProps) {
     };
 
     const handleView = () => {
-        router.push(`/chat/${channel.id}`);
+        router.push('/');
     };
 
     return (
         <View className="flex-row items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl mx-4 my-2 shadow-sm border border-gray-100 dark:border-gray-700">
+            <View className="mr-3">
+                <Avatar
+                    imageUrl={channel.imageUrl}
+                    name={channel.name}
+                    size="lg"
+                />
+            </View>
             <View className="flex-1 mr-4">
                 <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                     {channel.name}
