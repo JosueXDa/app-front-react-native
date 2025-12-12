@@ -11,7 +11,6 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
-import '@/global.css';
 
 export const unstable_settings = {
   anchor: '(app)',
