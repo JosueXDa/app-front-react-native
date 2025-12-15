@@ -53,10 +53,9 @@ export class WebSocketManager {
                 const data = JSON.parse(event.data);
                 console.log('[WebSocket] Received:', data.type);
                 
-                // Assuming the server sends messages with a 'type' field
-                // Adjust based on actual server message structure
+                // Backend sends messages with structure: { type: 'NEW_MESSAGE' | 'MESSAGE_DELETED' | 'ERROR', payload: any }
                 if (data.type) {
-                    this.emit(data.type, data.payload || data);
+                    this.emit(data.type, data.payload);
                 }
             } catch (e) {
                 console.error("Failed to parse WebSocket message", e);
@@ -119,17 +118,14 @@ export class WebSocketManager {
             }, 5000);
         }
     }
-    // Message-specific convenience methods
-    public setupMessageHandlers(channelId: string, onNewMessage: (message: any) => void) {
-        this.on('NEW_MESSAGE', (data) => {
-            if (data.channelId === channelId) {
-                onNewMessage(data);
-            }
-        });
+
+    // Thread management methods (following backend protocol)
+    public joinThread(threadId: string) {
+        this.sendMessage('JOIN_THREAD', { threadId });
     }
 
-    public sendChatMessage(channelId: string, content: string) {
-        this.sendMessage('SEND_MESSAGE', { channelId, content });
+    public leaveThread(threadId: string) {
+        this.sendMessage('LEAVE_THREAD', { threadId });
     }
 }
 

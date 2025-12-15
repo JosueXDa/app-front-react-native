@@ -1,93 +1,185 @@
+'use client';
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { createAvatar } from '@gluestack-ui/core/avatar/creator';
 
-interface AvatarProps {
-    imageUrl?: string | null;
-    name: string;
-    size?: 'sm' | 'md' | 'lg' | 'xl';
-}
+import { View, Text, Image, Platform } from 'react-native';
 
-const sizeMap = {
-    sm: { container: 32, text: 12 },
-    md: { container: 40, text: 14 },
-    lg: { container: 48, text: 16 },
-    xl: { container: 64, text: 20 },
-};
+import { tva } from '@gluestack-ui/utils/nativewind-utils';
+import {
+  withStyleContext,
+  useStyleContext,
+} from '@gluestack-ui/utils/nativewind-utils';
+const SCOPE = 'AVATAR';
+import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
 
-const getInitials = (name: string): string => {
-    const words = name.trim().split(/\s+/);
-    if (words.length === 1) {
-        return words[0].substring(0, 2).toUpperCase();
-    }
-    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
-};
+const UIAvatar = createAvatar({
+  Root: withStyleContext(View, SCOPE),
+  Badge: View,
+  Group: View,
+  Image: Image,
+  FallbackText: Text,
+});
 
-const generateColor = (name: string): string => {
-    const colors = [
-        '#ef4444', // red
-        '#f97316', // orange
-        '#f59e0b', // amber
-        '#eab308', // yellow
-        '#84cc16', // lime
-        '#22c55e', // green
-        '#10b981', // emerald
-        '#14b8a6', // teal
-        '#06b6d4', // cyan
-        '#0ea5e9', // sky
-        '#3b82f6', // blue
-        '#6366f1', // indigo
-        '#8b5cf6', // violet
-        '#a855f7', // purple
-        '#d946ef', // fuchsia
-        '#ec4899', // pink
-    ];
+const avatarStyle = tva({
+  base: 'rounded-full justify-center items-center relative bg-primary-600 group-[.avatar-group]/avatar-group:-ml-2.5',
+  variants: {
+    size: {
+      'xs': 'w-6 h-6',
+      'sm': 'w-8 h-8',
+      'md': 'w-12 h-12',
+      'lg': 'w-16 h-16',
+      'xl': 'w-24 h-24',
+      '2xl': 'w-32 h-32',
+    },
+  },
+});
 
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
+const avatarFallbackTextStyle = tva({
+  base: 'text-typography-0 font-semibold overflow-hidden text-transform:uppercase web:cursor-default',
 
-    return colors[Math.abs(hash) % colors.length];
-};
+  parentVariants: {
+    size: {
+      'xs': 'text-2xs',
+      'sm': 'text-xs',
+      'md': 'text-base',
+      'lg': 'text-xl',
+      'xl': 'text-3xl',
+      '2xl': 'text-5xl',
+    },
+  },
+});
 
-export function Avatar({ imageUrl, name, size = 'md' }: AvatarProps) {
-    const initials = getInitials(name);
-    const bgColor = generateColor(name);
-    const dimensions = sizeMap[size];
+const avatarGroupStyle = tva({
+  base: 'group/avatar-group flex-row-reverse relative avatar-group',
+});
 
-    if (imageUrl) {
-        return (
-            <Image
-                source={{ uri: imageUrl }}
-                style={{
-                    width: dimensions.container,
-                    height: dimensions.container,
-                    borderRadius: dimensions.container / 2,
-                }}
-            />
-        );
-    }
+const avatarBadgeStyle = tva({
+  base: 'w-5 h-5 bg-success-500 rounded-full absolute right-0 bottom-0 border-background-0 border-2',
+  parentVariants: {
+    size: {
+      'xs': 'w-2 h-2',
+      'sm': 'w-2 h-2',
+      'md': 'w-3 h-3',
+      'lg': 'w-4 h-4',
+      'xl': 'w-6 h-6',
+      '2xl': 'w-8 h-8',
+    },
+  },
+});
 
-    return (
-        <View
-            style={{
-                width: dimensions.container,
-                height: dimensions.container,
-                borderRadius: dimensions.container / 2,
-                backgroundColor: bgColor,
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
-        >
-            <Text
-                style={{
-                    fontSize: dimensions.text,
-                    fontWeight: '600',
-                    color: '#ffffff',
-                }}
-            >
-                {initials}
-            </Text>
-        </View>
-    );
-}
+const avatarImageStyle = tva({
+  base: 'h-full w-full rounded-full absolute',
+});
+
+type IAvatarProps = Omit<
+  React.ComponentPropsWithoutRef<typeof UIAvatar>,
+  'context'
+> &
+  VariantProps<typeof avatarStyle>;
+
+const Avatar = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar>,
+  IAvatarProps
+>(function Avatar({ className, size = 'md', ...props }, ref) {
+  return (
+    <UIAvatar
+      ref={ref}
+      {...props}
+      className={avatarStyle({ size, class: className })}
+      context={{ size }}
+    />
+  );
+});
+
+type IAvatarBadgeProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Badge> &
+  VariantProps<typeof avatarBadgeStyle>;
+
+const AvatarBadge = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar.Badge>,
+  IAvatarBadgeProps
+>(function AvatarBadge({ className, size, ...props }, ref) {
+  const { size: parentSize } = useStyleContext(SCOPE);
+
+  return (
+    <UIAvatar.Badge
+      ref={ref}
+      {...props}
+      className={avatarBadgeStyle({
+        parentVariants: {
+          size: parentSize,
+        },
+        size,
+        class: className,
+      })}
+    />
+  );
+});
+
+type IAvatarFallbackTextProps = React.ComponentPropsWithoutRef<
+  typeof UIAvatar.FallbackText
+> &
+  VariantProps<typeof avatarFallbackTextStyle>;
+const AvatarFallbackText = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar.FallbackText>,
+  IAvatarFallbackTextProps
+>(function AvatarFallbackText({ className, size, ...props }, ref) {
+  const { size: parentSize } = useStyleContext(SCOPE);
+
+  return (
+    <UIAvatar.FallbackText
+      ref={ref}
+      {...props}
+      className={avatarFallbackTextStyle({
+        parentVariants: {
+          size: parentSize,
+        },
+        size,
+        class: className,
+      })}
+    />
+  );
+});
+
+type IAvatarImageProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Image> &
+  VariantProps<typeof avatarImageStyle>;
+
+const AvatarImage = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar.Image>,
+  IAvatarImageProps
+>(function AvatarImage({ className, ...props }, ref) {
+  return (
+    <UIAvatar.Image
+      ref={ref}
+      {...props}
+      className={avatarImageStyle({
+        class: className,
+      })}
+      // @ts-expect-error : This is a workaround to fix the issue with the image style on web.
+      style={
+        Platform.OS === 'web'
+          ? { height: 'revert-layer', width: 'revert-layer' }
+          : undefined
+      }
+    />
+  );
+});
+
+type IAvatarGroupProps = React.ComponentPropsWithoutRef<typeof UIAvatar.Group> &
+  VariantProps<typeof avatarGroupStyle>;
+
+const AvatarGroup = React.forwardRef<
+  React.ComponentRef<typeof UIAvatar.Group>,
+  IAvatarGroupProps
+>(function AvatarGroup({ className, ...props }, ref) {
+  return (
+    <UIAvatar.Group
+      ref={ref}
+      {...props}
+      className={avatarGroupStyle({
+        class: className,
+      })}
+    />
+  );
+});
+
+export { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage, AvatarGroup };

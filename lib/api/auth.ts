@@ -15,6 +15,8 @@ export interface User {
     id: string;
     name: string;
     email: string;
+    image?: string | null;
+    // ⚠️ DEPRECATED: Use 'image' instead. Kept for backward compatibility
     avatar?: string;
 }
 

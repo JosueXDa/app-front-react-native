@@ -57,6 +57,20 @@ export function DashboardTabs() {
                     href: null,
                 }}
             />
+
+            <Tabs.Screen
+                name="channels/[channelId]/[threadId]"
+                options={{
+                    href: null,
+                }}
+            />
+
+            <Tabs.Screen
+                name="channels/[channelId]/index"
+                options={{
+                    href: null,
+                }}
+            />
         </Tabs>
     );
 }

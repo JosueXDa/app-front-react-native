@@ -1,12 +1,9 @@
-import { Avatar } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
-import { useSelectedChannel } from '@/context/SelectedChannelContext';
-import { Channel, createMessage, getChannelById, getMessages, Message } from '@/lib/api/chat';
+import { Channel, createMessage, getMessages, Message, Thread } from '@/lib/api/chat';
 import { wsManager } from '@/lib/api/ws';
-import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, MoreVertical, Send } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
 
 interface PendingMessage {
     tempId: string;
@@ -15,17 +12,14 @@ interface PendingMessage {
     retries: number;
 }
 
-export default function ChannelScreen() {
-    const { channelId } = useLocalSearchParams<{ channelId: string }>();
-    const router = useRouter();
-    const { width } = useWindowDimensions();
-    const isDesktop = width >= 768;
-    
-    // Primero intentar usar el canal del contexto, luego hacer fetch si no existe
-    const { selectedChannel } = useSelectedChannel();
-    const [channel, setChannel] = useState<Channel | null>(
-        selectedChannel?.id === channelId ? selectedChannel : null
-    );
+interface ChatViewProps {
+    channel: Channel;
+    thread: Thread;
+    showBackButton?: boolean;
+    onBack?: () => void;
+}
+
+export function ChatView({ channel, thread, showBackButton = true, onBack }: ChatViewProps) {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -37,41 +31,12 @@ export default function ChannelScreen() {
     
     const { user } = useAuth();
 
-    const handleBack = () => {
-        router.back();
-    };
-
-    // Fetch channel data - usa el contexto primero, si no coincide hace fetch
-    useEffect(() => {
-        const fetchChannel = async () => {
-            if (!channelId) return;
-            
-            // Si el canal del contexto coincide con el channelId, úsalo directamente
-            if (selectedChannel?.id === channelId) {
-                setChannel(selectedChannel);
-                console.log('[ChannelScreen] Using channel from context:', selectedChannel.name);
-                return;
-            }
-            
-            // Si no, hacer fetch del canal
-            try {
-                console.log('[ChannelScreen] Fetching channel data for:', channelId);
-                const fetchedChannel = await getChannelById(channelId);
-                setChannel(fetchedChannel);
-            } catch (err) {
-                console.error('Failed to fetch channel:', err);
-                setError('Failed to load channel.');
-            }
-        };
-        fetchChannel();
-    }, [channelId, selectedChannel]);
-
     const fetchMessages = useCallback(async () => {
-        if (!channelId) return;
+        if (!thread.id) return;
         try {
             setIsLoading(true);
             setError(null);
-            const fetchedMessages = await getMessages(channelId);
+            const fetchedMessages = await getMessages(thread.id);
             setMessages(fetchedMessages);
         } catch (err) {
             console.error('Failed to fetch messages:', err);
@@ -79,10 +44,10 @@ export default function ChannelScreen() {
         } finally {
             setIsLoading(false);
         }
-    }, [channelId]);
+    }, [thread.id]);
 
     const processPendingQueue = useCallback(async () => {
-        if (isSendingRef.current || pendingQueueRef.current.length === 0 || !user || !channelId) {
+        if (isSendingRef.current || pendingQueueRef.current.length === 0 || !user || !thread.id) {
             return;
         }
 
@@ -96,7 +61,7 @@ export default function ChannelScreen() {
 
         try {
             const createdMessage = await createMessage({
-                channelId,
+                threadId: thread.id,
                 content: pendingMsg.content
             });
             console.log(`Message ${pendingMsg.tempId} sent, server returned:`, createdMessage.id);
@@ -122,10 +87,10 @@ export default function ChannelScreen() {
                 setTimeout(() => processPendingQueue(), 100);
             }
         }
-    }, [channelId, user]);
+    }, [thread.id, user]);
 
     const handleSend = async () => {
-        if (!message.trim() || !user || !channelId) return;
+        if (!message.trim() || !user || !thread.id) return;
 
         const originalMessage = message.trim();
         const tempId = `temp-${Date.now()}`;
@@ -133,7 +98,7 @@ export default function ChannelScreen() {
         const tempMessage: Message = {
             id: tempId,
             senderId: user.id,
-            channelId,
+            threadId: thread.id,
             content: originalMessage,
             createdAt: new Date().toISOString(),
             sender: {
@@ -157,14 +122,31 @@ export default function ChannelScreen() {
         processPendingQueue();
     };
 
-    const handleNewMessage = useCallback((newMessage: Message) => {
-        console.log('[ChannelScreen] 📨 New message received:', newMessage.id);
+    const handleNewMessage = useCallback((payload: any) => {
+        console.log('[ChatView] 📨 New message received:', payload);
+        
+        // Payload structure from backend: { id, content, senderId, threadId, createdAt, sender: { id, name, image } }
+        const newMessage: Message = {
+            id: payload.id,
+            senderId: payload.senderId,
+            threadId: payload.threadId,
+            content: payload.content,
+            createdAt: payload.createdAt,
+            sender: {
+                id: payload.sender.id,
+                name: payload.sender.name,
+                avatar: payload.sender.image || undefined
+            }
+        };
+        
         setMessages(prev => {
+            // Check if message already exists
             if (prev.some(msg => msg.id === newMessage.id)) {
-                console.log('[ChannelScreen] ⚠️ Message already exists, skipping');
+                console.log('[ChatView] ⚠️ Message already exists, skipping');
                 return prev;
             }
 
+            // Replace temp message if exists
             const tempIndex = prev.findIndex(
                 msg => msg.id.startsWith('temp-') && 
                 msg.senderId === newMessage.senderId &&
@@ -172,7 +154,7 @@ export default function ChannelScreen() {
             );
 
             if (tempIndex !== -1) {
-                console.log('[ChannelScreen] ✅ Replacing temp:', prev[tempIndex].id, '→', newMessage.id);
+                console.log('[ChatView] ✅ Replacing temp:', prev[tempIndex].id, '→', newMessage.id);
                 return [
                     ...prev.slice(0, tempIndex),
                     newMessage,
@@ -180,107 +162,112 @@ export default function ChannelScreen() {
                 ];
             }
 
-            console.log('[ChannelScreen] ➕ Adding new message from other user');
+            console.log('[ChatView] ➕ Adding new message');
             const updated = [...prev, newMessage];
             
-            if (newMessage.senderId === user?.id) {
-                setTimeout(() => {
-                    flatListRef.current?.scrollToEnd({ animated: true });
-                }, 100);
-            }
+            // Auto-scroll to bottom for new messages
+            setTimeout(() => {
+                flatListRef.current?.scrollToEnd({ animated: true });
+            }, 100);
             
             return updated;
         });
-    }, [user?.id]);
+    }, []);
+
+    const handleMessageDeleted = useCallback((payload: any) => {
+        console.log('[ChatView] 🗑️ Message deleted:', payload);
+        // Payload structure: { id, threadId }
+        setMessages(prev => prev.filter(msg => msg.id !== payload.id));
+    }, []);
 
     useEffect(() => {
-        if (!channelId) return;
-
-        let cleanup: (() => void) | null = null;
-        let messageHandlerRef: ((data: any) => void) | null = null;
+        if (!thread.id) return;
 
         const setupWebSocket = async () => {
             try {
+                console.log('[ChatView] 🔌 Setting up WebSocket for thread:', thread.id);
+                
+                // Connect to WebSocket
                 await wsManager.connect();
-
-                console.log(`[WebSocket] Joining channel: ${channelId}`);
-                wsManager.sendMessage('JOIN_CHANNEL', {
-                    channelId
-                });
-
-                messageHandlerRef = (data: any) => {
-                    let message = null;
-                    let receivedChannelId = null;
-                    
-                    if (data.message && data.channelId) {
-                        message = data.message;
-                        receivedChannelId = data.channelId;
-                    } else if (data.id && data.content && data.senderId) {
-                        message = data;
-                        receivedChannelId = data.channelId;
-                    }
-                    
-                    if (receivedChannelId === channelId && message) {
-                        console.log(`[ChannelScreen] ✅ Message for this channel`);
-                        handleNewMessage(message);
+                
+                console.log('[ChatView] ✅ WebSocket connected, joining thread');
+                
+                // Join thread (backend protocol)
+                wsManager.joinThread(thread.id);
+                
+                // Subscribe to NEW_MESSAGE events
+                const messageHandler = (payload: any) => {
+                    console.log('[ChatView] 📬 NEW_MESSAGE event:', payload);
+                    if (payload.threadId === thread.id) {
+                        handleNewMessage(payload);
                     }
                 };
-
-                wsManager.on('NEW_MESSAGE', messageHandlerRef);
-
-                cleanup = () => {
-                    console.log(`[WebSocket] Leaving channel: ${channelId}`);
-                    if (messageHandlerRef) {
-                        wsManager.off('NEW_MESSAGE', messageHandlerRef);
+                wsManager.on('NEW_MESSAGE', messageHandler);
+                
+                // Subscribe to MESSAGE_DELETED events
+                const deleteHandler = (payload: any) => {
+                    console.log('[ChatView] 📬 MESSAGE_DELETED event:', payload);
+                    if (payload.threadId === thread.id) {
+                        handleMessageDeleted(payload);
                     }
-                    wsManager.sendMessage('LEAVE_CHANNEL', {
-                        channelId
-                    });
+                };
+                wsManager.on('MESSAGE_DELETED', deleteHandler);
+                
+                // Subscribe to ERROR events
+                const errorHandler = (payload: any) => {
+                    console.error('[ChatView] ❌ WebSocket error:', payload);
+                    setError(payload.message || 'WebSocket error occurred');
+                };
+                wsManager.on('ERROR', errorHandler);
+                
+                // Cleanup function
+                return () => {
+                    console.log('[ChatView] 🧹 Cleaning up WebSocket');
+                    wsManager.off('NEW_MESSAGE', messageHandler);
+                    wsManager.off('MESSAGE_DELETED', deleteHandler);
+                    wsManager.off('ERROR', errorHandler);
+                    wsManager.leaveThread(thread.id);
                 };
             } catch (error) {
-                console.error('[WebSocket] Setup error:', error);
+                console.error('[ChatView] ❌ WebSocket setup failed:', error);
             }
         };
 
-        setupWebSocket();
+        const cleanup = setupWebSocket();
         fetchMessages();
 
         return () => {
-            cleanup?.();
+            cleanup.then(fn => fn?.());
         };
-    }, [channelId, handleNewMessage, fetchMessages]);
+    }, [thread.id, handleNewMessage, handleMessageDeleted, fetchMessages]);
 
-    if (!channel) {
-        return (
-            <View className="flex-1 items-center justify-center bg-[#efeae2] dark:bg-[#0b141a]">
-                <ActivityIndicator size="large" color="#00a884" />
-            </View>
-        );
-    }
-
-    const renderChatContent = () => (
+    return (
         <View className="flex-1 bg-[#efeae2] dark:bg-[#0b141a]">
             {/* Header */}
             <View className="flex-row items-center justify-between px-4 py-3 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                 <View className="flex-row items-center">
-                    <View className="mr-3">
-                        <Pressable onPress={handleBack}>
-                            <ArrowLeft size={20} color="#54656f" />
-                        </Pressable>
-                    </View>
-                    <View className="mr-3">
-                        <Avatar
-                            imageUrl={channel.imageUrl}
-                            name={channel.name || 'Unknown Channel'}
-                            size="md"
-                        />
-                    </View>
+                    {showBackButton && onBack && (
+                        <View className="mr-3">
+                            <Pressable onPress={onBack}>
+                                <ArrowLeft size={20} color="#54656f" />
+                            </Pressable>
+                        </View>
+                    )}
+                    {/* <View className="mr-3">
+                        <Avatar size="md">
+                            {channel.imageUrl ? (
+                                <AvatarImage source={{ uri: channel.imageUrl }} alt={thread.name || 'Unknown Thread'} />
+                            ) : (
+                                <AvatarFallbackText>{thread.name || 'Unknown Thread'}</AvatarFallbackText>
+                            )}
+                        </Avatar>
+                    </View> */}
                     <View>
                         <Text className="font-bold text-gray-900 dark:text-white text-base">
-                            {channel.name || 'Unknown Channel'}
+                            {thread.name || 'Unknown Thread'}
                         </Text>
                         <Text className="text-xs text-gray-500 dark:text-gray-400">
-                            tap here for info
+                            {channel.name}
                         </Text>
                     </View>
                 </View>
@@ -374,31 +361,4 @@ export default function ChannelScreen() {
             </KeyboardAvoidingView>
         </View>
     );
-
-    // Desktop: incluir espacio para miembros (placeholder)
-    if (isDesktop) {
-        return (
-            <View className="flex-1 flex-row bg-gray-100 dark:bg-gray-900">
-                {/* Main Chat Window */}
-                <View className="flex-1">
-                    {renderChatContent()}
-                </View>
-                
-                {/* Members List Placeholder (futuro) */}
-                <View className="w-64 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700">
-                    <View className="flex-1 items-center justify-center p-4">
-                        <Text className="text-gray-400 dark:text-gray-500 text-center">
-                            Members list
-                        </Text>
-                        <Text className="text-gray-400 dark:text-gray-500 text-xs text-center mt-2">
-                            (Coming soon)
-                        </Text>
-                    </View>
-                </View>
-            </View>
-        );
-    }
-
-    // Mobile: solo el chat
-    return renderChatContent();
 }

@@ -1,4 +1,4 @@
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallbackText } from '@/components/ui/avatar';
 import { useChannels } from '@/context/ChannelContex';
 import { Channel, isJoined as checkIsJoined, joinChannel } from '@/lib/api/chat';
 import { useRouter } from 'expo-router';
@@ -50,11 +50,13 @@ export function ChannelCard({ channel }: ChannelCardProps) {
     return (
         <View className="flex-row items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl mx-4 my-2 shadow-sm border border-gray-100 dark:border-gray-700">
             <View className="mr-3">
-                <Avatar
-                    imageUrl={channel.imageUrl}
-                    name={channel.name}
-                    size="lg"
-                />
+                <Avatar size="lg">
+                    {channel.imageUrl ? (
+                        <AvatarImage source={{ uri: channel.imageUrl }} alt={channel.name} />
+                    ) : (
+                        <AvatarFallbackText>{channel.name}</AvatarFallbackText>
+                    )}
+                </Avatar>
             </View>
             <View className="flex-1 mr-4">
                 <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-1">

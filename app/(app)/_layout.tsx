@@ -18,12 +18,14 @@ function AppLayoutContent() {
     if (isDesktop) {
         return (
             <View className="flex-1 flex-row bg-gray-50 dark:bg-gray-900">
-                {/* Sidebar */}
-                <Sidebar
-                    selectedChannelId={selectedChannel?.id}
-                    onSelectChannel={handleSelectChannel}
-                />
-                {/* Main Content */}
+                {/* Sidebar - 1/6 del viewport */}
+                <View>
+                    <Sidebar
+                        selectedChannelId={selectedChannel?.id}
+                        onSelectChannel={handleSelectChannel}
+                    />
+                </View>
+                {/* Main Content - 5/6 del viewport (resto de espacio) */}
                 <View className="flex-1">
                     <Slot />
                 </View>

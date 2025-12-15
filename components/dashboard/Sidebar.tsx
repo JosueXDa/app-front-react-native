@@ -1,10 +1,11 @@
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useChannels } from '@/context/ChannelContex';
 import { Channel } from '@/lib/api/chat';
 import { useRouter } from 'expo-router';
 import { Compass, MessageCircle, Plus } from 'lucide-react-native';
-import React from 'react';
+import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { CreateChannelModal } from '../newChannel/CreateChannelModal';
 
 interface SidebarProps {
     selectedChannelId?: string;
@@ -13,6 +14,7 @@ interface SidebarProps {
 
 export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
     const { joinedChannels, isLoading } = useChannels();
+    const [showCreateModal, setShowCreateModal] = useState(false);
     const router = useRouter();
 
     const handleChannelPress = (channel: Channel) => {
@@ -55,7 +57,7 @@ export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
 
                     {/* New Channel Button */}
                     <Pressable
-                        onPress={() => router.push('/explore')} // TODO: Cambiar a la ruta de crear canal cuando esté lista
+                        onPress={() => setShowCreateModal(true)}
                         className="w-12 h-12 rounded-full bg-[#00a884] items-center justify-center active:opacity-70"
                     >
                         <Plus size={24} color="white" />
@@ -79,11 +81,13 @@ export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
                                     selectedChannelId === item.id ? 'opacity-100' : 'opacity-80'
                                 }`}
                             >
-                                <Avatar
-                                    imageUrl={item.imageUrl}
-                                    name={item.name}
-                                    size="lg"
-                                />
+                                <Avatar size="md">
+                                    {item.imageUrl ? (
+                                        <AvatarImage source={{ uri: item.imageUrl }} alt={item.name} />
+                                    ) : (
+                                        <AvatarFallbackText>{item.name}</AvatarFallbackText>
+                                    )}
+                                </Avatar>
                                 {selectedChannelId === item.id && (
                                     <View className="absolute -right-1 top-0 w-3 h-3 rounded-full bg-[#00a884] border-2 border-white dark:border-gray-900" />
                                 )}
@@ -92,6 +96,12 @@ export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
                     </View>
                 )}
             </ScrollView>
+            {showCreateModal && (
+                <CreateChannelModal
+                    isOpen={showCreateModal}
+                    onClose={() => setShowCreateModal(false)}
+                />
+            )}
         </View>
     );
 }
