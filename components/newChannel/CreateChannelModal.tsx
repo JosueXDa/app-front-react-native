@@ -1,4 +1,3 @@
-import { ToastAlert } from '@/components/auth/ToastAlert';
 import { Button, ButtonSpinner, ButtonText } from '@/components/ui/button';
 import {
     FormControl,
@@ -11,7 +10,7 @@ import {
     FormControlLabelText
 } from '@/components/ui/form-control';
 import { HStack } from '@/components/ui/hstack';
-import { AlertCircleIcon, CloseIcon } from '@/components/ui/icon';
+import { Icon, AlertCircleIcon, CheckCircleIcon, CloseIcon } from '@/components/ui/icon';
 import { Input, InputField } from '@/components/ui/input';
 import {
     Modal,
@@ -22,7 +21,7 @@ import {
     ModalFooter,
     ModalHeader
 } from '@/components/ui/modal';
-import { useToast } from '@/components/ui/toast';
+import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
 import { VStack } from '@/components/ui/vstack';
 import { useChannels } from '@/context/ChannelContex';
 import { createChannel } from '@/lib/api/chat';
@@ -89,11 +88,13 @@ export function CreateChannelModal({ isOpen, onClose }: CreateChannelModalProps)
             toast.show({
                 placement: "top right",
                 render: ({ id }) => (
-                    <ToastAlert 
-                        id={id} 
-                        title="Success" 
-                        description={`Channel "${channelName}" created successfully!`} 
-                    />
+                    <Toast nativeID={`toast-${id}`} action="success" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={CheckCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Success</ToastTitle>
+                        </HStack>
+                        <ToastDescription>{`Channel "${channelName}" created successfully!`}</ToastDescription>
+                    </Toast>
                 )
             });
 
@@ -105,11 +106,13 @@ export function CreateChannelModal({ isOpen, onClose }: CreateChannelModalProps)
             toast.show({
                 placement: "top right",
                 render: ({ id }) => (
-                    <ToastAlert 
-                        id={id} 
-                        title="Error" 
-                        description={error.response?.data?.message || 'Failed to create channel. Please try again.'} 
-                    />
+                    <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={AlertCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Error</ToastTitle>
+                        </HStack>
+                        <ToastDescription>{error.response?.data?.message || 'Failed to create channel. Please try again.'}</ToastDescription>
+                    </Toast>
                 )
             });
         } finally {

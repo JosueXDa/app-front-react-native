@@ -1,4 +1,3 @@
-import { ToastAlert } from '@/components/auth/ToastAlert';
 import { Button, ButtonSpinner, ButtonText } from '@/components/ui/button';
 import {
     FormControl,
@@ -8,7 +7,8 @@ import {
     FormControlLabel,
     FormControlLabelText
 } from '@/components/ui/form-control';
-import { AlertCircleIcon, CloseIcon } from '@/components/ui/icon';
+import { Icon, AlertCircleIcon, CheckCircleIcon, CloseIcon } from '@/components/ui/icon';
+import { HStack } from '@/components/ui/hstack';
 import { Input, InputField } from '@/components/ui/input';
 import {
     Modal,
@@ -19,7 +19,7 @@ import {
     ModalFooter,
     ModalHeader
 } from '@/components/ui/modal';
-import { useToast } from '@/components/ui/toast';
+import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
 import { VStack } from '@/components/ui/vstack';
 import { createThread } from '@/lib/api/chat';
 import { useState } from 'react';
@@ -83,11 +83,13 @@ export function CreateThreadModal({
             toast.show({
                 placement: "top right",
                 render: ({ id }) => (
-                    <ToastAlert 
-                        id={id} 
-                        title="Éxito" 
-                        description={`Hilo "${threadName}" creado exitosamente!`} 
-                    />
+                    <Toast nativeID={`toast-${id}`} action="success" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={CheckCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Éxito</ToastTitle>
+                        </HStack>
+                        <ToastDescription>{`Hilo "${threadName}" creado exitosamente!`}</ToastDescription>
+                    </Toast>
                 )
             });
 
@@ -106,11 +108,13 @@ export function CreateThreadModal({
             toast.show({
                 placement: "top right",
                 render: ({ id }) => (
-                    <ToastAlert 
-                        id={id} 
-                        title="Error" 
-                        description={error?.response?.data?.message || 'Failed to create thread. Please try again.'} 
-                    />
+                    <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={AlertCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Error</ToastTitle>
+                        </HStack>
+                        <ToastDescription>{error?.response?.data?.message || 'Failed to create thread. Please try again.'}</ToastDescription>
+                    </Toast>
                 )
             });
         } finally {

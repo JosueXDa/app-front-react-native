@@ -1,12 +1,13 @@
 import { AuthInput } from '@/components/auth/AuthInput';
-import { useToast } from '@/components/ui/toast';
+import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
+import { Icon, AlertCircleIcon } from '@/components/ui/icon';
+import { HStack } from '@/components/ui/hstack';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ToastAlert } from '@/components/auth/ToastAlert';
 import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterScreen() {
@@ -22,11 +23,15 @@ export default function RegisterScreen() {
         if (!name || !email || !password || !confirmPassword) {
             toast.show({
                 placement: "top right",
-                render: ({ id }) => {
-                    return (
-                        <ToastAlert id={id} title="Error" description="Por favor completa todos los campos" />
-                    )
-                }
+                render: ({ id }) => (
+                    <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={AlertCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Error</ToastTitle>
+                        </HStack>
+                        <ToastDescription>Por favor completa todos los campos</ToastDescription>
+                    </Toast>
+                )
             })
             return;
         }
@@ -34,11 +39,15 @@ export default function RegisterScreen() {
         if (password !== confirmPassword) {
             toast.show({
                 placement: "top right",
-                render: ({ id }) => {
-                    return (
-                        <ToastAlert id={id} title="Error" description="Las contraseñas no coinciden" />
-                    )
-                }
+                render: ({ id }) => (
+                    <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={AlertCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Error</ToastTitle>
+                        </HStack>
+                        <ToastDescription>Las contraseñas no coinciden</ToastDescription>
+                    </Toast>
+                )
             })
             return;
         }
@@ -51,11 +60,15 @@ export default function RegisterScreen() {
             console.error(error);
             toast.show({
                 placement: "top right",
-                render: ({ id }) => {
-                    return (
-                        <ToastAlert id={id} title="Error" description={error.response?.data?.message || 'Error al registrarse'} />
-                    )
-                }
+                render: ({ id }) => (
+                    <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={AlertCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Error</ToastTitle>
+                        </HStack>
+                        <ToastDescription>{error.response?.data?.message || 'Error al registrarse'}</ToastDescription>
+                    </Toast>
+                )
             })
         } finally {
             setLoading(false);

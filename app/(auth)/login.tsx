@@ -1,7 +1,8 @@
 import { AuthInput } from '@/components/auth/AuthInput';
 import { GithubLoginButton } from '@/components/auth/GithubLoginButton';
-import { ToastAlert } from '@/components/auth/ToastAlert';
-import { useToast } from '@/components/ui/toast';
+import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
+import { Icon, AlertCircleIcon } from '@/components/ui/icon';
+import { HStack } from '@/components/ui/hstack';
 import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
@@ -20,11 +21,15 @@ export default function LoginScreen() {
         if (!email || !password) {
             toast.show({
                 placement: "top right",
-                render: ({ id }) => {
-                    return (
-                        <ToastAlert id={id} title="Error" description="Por favor completa todos los campos" />
-                    )
-                }
+                render: ({ id }) => (
+                    <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={AlertCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Error</ToastTitle>
+                        </HStack>
+                        <ToastDescription>Por favor completa todos los campos</ToastDescription>
+                    </Toast>
+                )
             })
             return;
         }
@@ -37,11 +42,15 @@ export default function LoginScreen() {
             console.error(error);
             toast.show({
                 placement: "top right",
-                render: ({ id }) => {
-                    return (
-                        <ToastAlert id={id} title="Error" description={error.response?.data?.message || 'Error al iniciar sesión'} />
-                    )
-                }
+                render: ({ id }) => (
+                    <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+                        <HStack space="sm">
+                            <Icon as={AlertCircleIcon} className="mt-0.5" />
+                            <ToastTitle>Error</ToastTitle>
+                        </HStack>
+                        <ToastDescription>{error.response?.data?.message || 'Error al iniciar sesión'}</ToastDescription>
+                    </Toast>
+                )
             })
         } finally {
             setLoading(false);
