@@ -1,9 +1,9 @@
+import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { useChannels } from '@/context/ChannelContex';
 import { useRouter } from 'expo-router';
-import { MessageCircle, Compass } from 'lucide-react-native';
+import { Compass, MessageCircle } from 'lucide-react-native';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
-import { Avatar } from '@/components/ui/avatar';
 
 export default function MeChannel() {
     const { user } = useAuth();
@@ -15,11 +15,10 @@ export default function MeChannel() {
             {/* Header */}
             <View className="bg-[#00a884] pt-12 pb-6 px-6">
                 <View className="flex-row items-center">
-                    <Avatar
-                        imageUrl={user?.avatar}
-                        name={user?.name || 'User'}
-                        size="xl"
-                    />
+                    <Avatar size='xl'>
+                        <AvatarImage source={{ uri: user?.image || undefined }} />
+                        <AvatarFallbackText>{user?.name || 'UNDF'}</AvatarFallbackText>
+                    </Avatar>
                     <View className="ml-4">
                         <Text className="text-white text-2xl font-bold">
                             {user?.name || 'User'}
@@ -84,11 +83,10 @@ export default function MeChannel() {
                                 onPress={() => router.push(`/channels/${channel.id}`)}
                                 className="flex-row items-center p-3 bg-white dark:bg-gray-800 rounded-lg mb-2 active:bg-gray-50 dark:active:bg-gray-700"
                             >
-                                <Avatar
-                                    imageUrl={channel.imageUrl}
-                                    name={channel.name}
-                                    size="md"
-                                />
+                                <Avatar size="md" >
+                                    <AvatarImage source={{ uri: channel.imageUrl || undefined }} />
+                                    <AvatarFallbackText>{channel.name}</AvatarFallbackText>
+                                </Avatar>
                                 <View className="ml-3 flex-1">
                                     <Text className="font-semibold text-gray-900 dark:text-white">
                                         {channel.name}

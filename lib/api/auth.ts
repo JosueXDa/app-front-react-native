@@ -16,8 +16,6 @@ export interface User {
     name: string;
     email: string;
     image?: string | null;
-    // ⚠️ DEPRECATED: Use 'image' instead. Kept for backward compatibility
-    avatar?: string;
 }
 
 export interface Session {

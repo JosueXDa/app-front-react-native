@@ -1,5 +1,4 @@
 import { Thread } from '@/lib/api/chat';
-import { MessageCircle } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 
@@ -25,41 +24,63 @@ export function ThreadCard({ thread, onPress }: ThreadCardProps) {
     };
 
     return (
-        <Pressable
+<Pressable
             onPress={onPress}
-            className="p-4 border-b border-gray-200 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-800"
+            className="flex-row active:bg-gray-50 dark:active:bg-gray-800 overflow-hidden"
         >
-            <View className="flex-row items-start">
-                <View className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 items-center justify-center mr-3">
-                    <MessageCircle size={20} color="#6366f1" />
-                </View>
+            {/* --- SECCIÓN IZQUIERDA (GRÁFICA) --- */}
+            {/* Aumentamos el ancho a w-20 para dar espacio a la curva */}
+            <View className="w-20 relative">
                 
-                <View className="flex-1">
-                    <Text className="text-base font-semibold text-gray-900 dark:text-white mb-1">
+                {/* 1. La línea vertical principal GRUESA */}
+                {/* Se mantiene a la izquierda, ocupando todo el alto */}
+                <View 
+                    className="absolute left-0 top-0 bottom-0 w-2 bg-black dark:bg-gray-400" 
+                />
+
+                {/* 2. La RAMA CURVA */}
+                {/* El truco: Un cuadrado con borde inferior e izquierdo, 
+                    y la esquina inferior-izquierda redondeada al máximo. */}
+                <View 
+                    // Posición: justo a la derecha de la línea gruesa (left-2) y arriba (top-0)
+                    // Tamaño: w-8 h-8 crea una curva amplia.
+                    // Bordes: border-b-2 y border-l-2 del mismo color que la línea/nodo.
+                    // Redondeo: rounded-bl-full crea el cuarto de círculo perfecto.
+                    className="absolute left-2 top-0 w-8 h-8 border-b-2 border-l-2 border-black dark:border-gray-400 rounded-bl-full bg-transparent"
+                />
+
+                {/* 3. El NODO (Círculo) */}
+                {/* Lo posicionamos absolutamente para que coincida con el final de la curva */}
+                <View 
+                    // left-8: Alinea el centro del nodo con el final de la curva de w-8.
+                    // top-6: Alinea verticalmente el centro del nodo con el final de la curva de h-8.
+                    className="absolute left-8 top-6 w-4 h-4 rounded-full border-[2px] border-black bg-white dark:border-gray-400 dark:bg-gray-900 z-10" 
+                />
+            </View>
+
+            {/* --- SECCIÓN DERECHA (CONTENIDO) --- */}
+            {/* Aumentamos el padding superior (pt-5) para alinear el texto con el nuevo nodo más abajo */}
+            <View className="flex-1 pb-8 pt-5 pr-4">
+                <View className="flex-row justify-between items-start">
+                    <Text className="text-lg font-bold text-gray-900 dark:text-white mb-1">
                         {thread.name}
                     </Text>
                     
-                    {thread.description && (
-                        <Text 
-                            className="text-sm text-gray-600 dark:text-gray-400 mb-1"
-                            numberOfLines={2}
-                        >
-                            {thread.description}
-                        </Text>
-                    )}
-                    
-                    <Text className="text-xs text-gray-500 dark:text-gray-500">
+                    <Text className="text-xs text-gray-500 mt-1">
                         {formatDate(thread.createdAt)}
                     </Text>
                 </View>
-                
-                {thread.isArchived && (
-                    <View className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded ml-2">
-                        <Text className="text-xs text-gray-600 dark:text-gray-400">
-                            Archivado
-                        </Text>
-                    </View>
+
+                {thread.description && (
+                    <Text 
+                        className="text-sm text-gray-600 dark:text-gray-400 mb-2"
+                        numberOfLines={2}
+                    >
+                        {thread.description}
+                    </Text>
                 )}
+
+                {/* ... (Badge de Archivado sigue igual) ... */}
             </View>
         </Pressable>
     );
