@@ -1,4 +1,4 @@
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { useSelectedChannel } from '@/context/SelectedChannelContext';
 import { Channel, Message, createMessage, getMessages } from '@/lib/api/chat';
@@ -124,7 +124,7 @@ export function ChatWindow({ channel }: ChatWindowProps) {
             sender: {
                 id: user.id,
                 name: user.name,
-                avatar: user.avatar
+                image: user.image
             }
         };
 
@@ -269,11 +269,13 @@ export function ChatWindow({ channel }: ChatWindowProps) {
                         </Pressable>
                     </View>
                     <View className="mr-3">
-                        <Avatar
-                            imageUrl={channel.imageUrl}
-                            name={channel.name || 'Unknown Channel'}
-                            size="md"
-                        />
+                        <Avatar size="md">
+                            {channel.imageUrl ? (
+                                <AvatarImage source={{ uri: channel.imageUrl }} alt={channel.name} />
+                            ) : (
+                                <AvatarFallbackText>{channel.name}</AvatarFallbackText>
+                            )}
+                        </Avatar>
                     </View>
                     <View>
                         <Text className="font-bold text-gray-900 dark:text-white text-base">

@@ -1,8 +1,8 @@
+import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { LogOut, Moon, Sun, User } from 'lucide-react-native';
 import { Pressable, ScrollView, Switch, Text, useColorScheme, View } from 'react-native';
-import { Avatar } from '@/components/ui/avatar';
 
 export default function SettingsScreen() {
     const { user, signOut } = useAuth();
@@ -26,11 +26,13 @@ export default function SettingsScreen() {
             {/* Profile Section */}
             <View className="bg-white dark:bg-gray-800 m-4 rounded-lg p-4 shadow-sm">
                 <View className="flex-row items-center mb-4">
-                    <Avatar
-                        imageUrl={user?.avatar}
-                        name={user?.name || 'User'}
-                        size="xl"
-                    />
+                    <Avatar size="md">
+                        {user?.image ? (
+                            <AvatarImage source={{ uri: user.image }} alt={user.name || 'User'} />
+                        ) : (
+                            <AvatarFallbackText>{user?.name || 'User'}</AvatarFallbackText>
+                        )}
+                    </Avatar>
                     <View className="ml-4 flex-1">
                         <Text className="text-lg font-bold text-gray-900 dark:text-white">
                             {user?.name || 'User'}
