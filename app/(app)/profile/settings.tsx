@@ -27,15 +27,15 @@ export default function SettingsScreen() {
             <View className="bg-white dark:bg-gray-800 m-4 rounded-lg p-4 shadow-sm">
                 <View className="flex-row items-center mb-4">
                     <Avatar size="md">
-                        {user?.image ? (
-                            <AvatarImage source={{ uri: user.image }} alt={user.name || 'User'} />
+                        {user?.profile?.avatarUrl ? (
+                            <AvatarImage source={{ uri: user.profile.avatarUrl }} alt={user.profile?.displayName || user.name || 'User'} />
                         ) : (
-                            <AvatarFallbackText>{user?.name || 'User'}</AvatarFallbackText>
+                            <AvatarFallbackText>{user?.profile?.displayName || user?.name || 'User'}</AvatarFallbackText>
                         )}
                     </Avatar>
                     <View className="ml-4 flex-1">
                         <Text className="text-lg font-bold text-gray-900 dark:text-white">
-                            {user?.name || 'User'}
+                            {user?.profile?.displayName || user?.name || 'User'}
                         </Text>
                         <Text className="text-sm text-gray-500 dark:text-gray-400">
                             {user?.email || 'user@example.com'}

@@ -185,21 +185,26 @@ export const deleteThread = async (threadId: string): Promise<{ message: string 
 };
 
 // Message Interfaces
+export interface UserProfile {
+    displayName: string;
+    avatarUrl: string | null;
+}
+
+export interface MessageSender {
+    id: string;
+    name: string;
+    profile: UserProfile;
+}
+
 export interface Message {
     id: string;
     senderId: string;
-    threadId?: string; // Changed from channelId to threadId
+    threadId: string;
     content: string;
     createdAt: string;
-    // ⚠️ DEPRECATED: Use 'threadId' instead. Kept for backward compatibility
+    sender: MessageSender;
+    // ⚠️ DEPRECATED: Kept for backward compatibility
     channelId?: string;
-    sender?: {
-        id: string;
-        name: string;
-        image?: string | null; // Changed from avatar to image
-        // ⚠️ DEPRECATED: Use 'image' instead. Kept for backward compatibility
-        avatar?: string;
-    };
 }
 
 export interface CreateMessageDto {

@@ -1,6 +1,4 @@
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import { Platform } from "react-native";
-import { storage } from "../storage";
+import axios from "axios";
 
 const BASE_URL = process.env.EXPO_PUBLIC_BACK_URL || "http://localhost:3000";
 
@@ -16,37 +14,4 @@ export const axiosInstance = axios.create({
     },
 });
 
-axiosInstance.interceptors.request.use(
-    async (config: InternalAxiosRequestConfig) => {
-        if (Platform.OS !== 'web') {
-            const token = await storage.getItem('session_token');
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-        }
-        return config;
-    },
-    (error: AxiosError) => {
-        return Promise.reject(error);
-    }
-);
-
-axiosInstance.interceptors.response.use(
-    async (response: AxiosResponse) => {
-        if (Platform.OS !== 'web') {
-            const setCookie = response.headers['set-cookie'];
-            if (setCookie) {
-                const cookieString = Array.isArray(setCookie) ? setCookie.join(';') : setCookie;
-                const match = cookieString.match(/better-auth\.session_token=([^;]+)/);
-                if (match && match[1]) {
-                    await storage.setItem('session_token', match[1]);
-                }
-            }
-        }
-        return response;
-    },
-    async (error: AxiosError) => {
-        return Promise.reject(error);
-    }
-);
 

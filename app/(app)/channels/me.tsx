@@ -16,12 +16,12 @@ export default function MeChannel() {
             <View className="bg-[#00a884] pt-12 pb-6 px-6">
                 <View className="flex-row items-center">
                     <Avatar size='xl'>
-                        <AvatarImage source={{ uri: user?.image || undefined }} />
-                        <AvatarFallbackText>{user?.name || 'UNDF'}</AvatarFallbackText>
+                        <AvatarImage source={{ uri: user?.profile?.avatarUrl || undefined }} />
+                        <AvatarFallbackText>{user?.profile?.displayName || user?.name || 'UNDF'}</AvatarFallbackText>
                     </Avatar>
                     <View className="ml-4">
                         <Text className="text-white text-2xl font-bold">
-                            {user?.name || 'User'}
+                            {user?.profile?.displayName || user?.name || 'User'}
                         </Text>
                         <Text className="text-white/80 text-sm">
                             Welcome back!
