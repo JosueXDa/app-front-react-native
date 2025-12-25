@@ -63,6 +63,12 @@ export const ChatInput = ({ onSend }: ChatInputProps) => {
                             className="flex-1 text-base text-gray-900 dark:text-white py-2 px-2 outline-none"
                             multiline
                             onFocus={() => setShowPicker(false)}
+                            onKeyPress={e => {
+                                if (e.nativeEvent.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleSendPress();
+                                }
+                            }}
                         />
                     </View>
                     <Pressable
