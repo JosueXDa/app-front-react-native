@@ -2,10 +2,10 @@ import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar'
 import { useAuth } from '@/context/AuthContext';
 import { Channel, createMessage, getMessages, Message, Thread } from '@/lib/api/chat';
 import { wsManager } from '@/lib/api/ws';
-import EmojiPicker, { Theme } from 'emoji-picker-react';
-import { ArrowLeft, MoreVertical, Send, Smile } from 'lucide-react-native';
+import { ArrowLeft, MoreVertical } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { ChatInput } from './ChatInput';
 
 
 interface PendingMessage {
@@ -15,6 +15,7 @@ interface PendingMessage {
     retries: number;
 }
 
+
 interface ChatViewProps {
     channel: Channel;
     thread: Thread;
@@ -23,11 +24,9 @@ interface ChatViewProps {
 }
 
 export function ChatView({ channel, thread, showBackButton = true, onBack }: ChatViewProps) {
-    const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [showPicker, setShowPicker] = useState(false);
     
     
 
@@ -36,10 +35,6 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
     const flatListRef = useRef<FlatList>(null);
     
     const { user } = useAuth();
-
-    const onEmojiClick = (emojiObject: any) =>{
-        setMessage((prevInput) => prevInput + emojiObject.emoji);
-    }
 
     const fetchMessages = useCallback(async () => {
         if (!thread.id) return;
@@ -139,10 +134,10 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
         }
     }, [thread.id, user]);
 
-    const handleSend = async () => {
-        if (!message.trim() || !user || !thread.id) return;
+    const handleSend = async (content: string) => {
+        if (!content.trim() || !user || !thread.id) return;
 
-        const originalMessage = message.trim();
+        const originalMessage = content.trim();
         const tempId = `temp-${Date.now()}`;
 
         const tempMessage: Message = {
@@ -161,7 +156,6 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
             }
         };
 
-        setMessage('');
         setMessages(prev => [...prev, tempMessage]);
         setError(null);
 
@@ -423,59 +417,7 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                 />
             )}
 
-            {showPicker && (
-                <View className="absolute bottom-20 left-4 z-50 shadow-xl rounded-xl">
-                    <EmojiPicker
-                        onEmojiClick={onEmojiClick}
-                        theme={Theme.AUTO} // O puedes forzar Theme.DARK
-                        searchDisabled={false}
-                        width={300} // Ancho del picker en px
-                        height={400} // Alto del picker en px
-                        previewConfig={{ showPreview: false }} // Oculta la previsualización inferior para ahorrar espacio
-                    />
-                </View>
-            )}
-
-
-
-            {/* Input Area */}
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
-            >
-                <View className="flex-row items-center p-3 bg-gray-100 dark:bg-[#2b2d31] border-t border-gray-200 dark:border-[#1f2023]">
-                    <View className="flex-1 flex-row items-center bg-white dark:bg-[#383a40] rounded-lg border border-gray-200 dark:border-transparent mr-3">
-                        
-                        {/* Botón Carita */}
-                        <Pressable 
-                            onPress={() => setShowPicker(!showPicker)}
-                            className="p-2 ml-1"
-                        >
-                            <Smile 
-                                size={24} 
-                                color={showPicker ? "#5865F2" : "#9ca3af"} 
-                            />
-                        </Pressable>
-
-                        <TextInput
-                            value={message}
-                            onChangeText={setMessage}
-                            placeholder="Message"
-                            placeholderTextColor="#9ca3af"
-                            className="flex-1 text-base text-gray-900 dark:text-white py-2 px-2 outline-none" // outline-none es útil en web
-                            multiline
-                            // Opcional: cerrar el picker si el usuario empieza a escribir
-                            onFocus={() => setShowPicker(false)}
-                        />
-                    </View>
-                    <Pressable
-                        onPress={handleSend}
-                        className="w-10 h-10 bg-[#5865F2] rounded-full items-center justify-center hover:bg-[#4752c4]"
-                    >
-                        <Send size={20} color="white" />
-                    </Pressable>
-                </View>
-            </KeyboardAvoidingView>
+            <ChatInput onSend={handleSend} />
         </View>
     );
 }
