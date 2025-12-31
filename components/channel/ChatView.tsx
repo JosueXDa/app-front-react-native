@@ -1,16 +1,28 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
-import { Channel, createMessage, getMessages, Message, Thread } from '@/lib/api/chat';
+import { Channel, createMessage, getMessages, Message, MessageAttachment } from '@/lib/api/chat';
 import { wsManager } from '@/lib/api/ws';
 import { ArrowLeft, MoreVertical } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { AttachmentsList } from './AttachmentRenderer';
 import { ChatInput } from './ChatInput';
 
+export interface Thread {
+    id: string;
+    channelId: string;
+    name: string;
+    description?: string | null;
+    createdBy: string;
+    isArchived: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
 
 interface PendingMessage {
     tempId: string;
     content: string;
+    attachments?: MessageAttachment[];
     timestamp: number;
     retries: number;
 }
@@ -84,7 +96,8 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
         try {
             const createdMessage = await createMessage({
                 threadId: thread.id,
-                content: pendingMsg.content
+                content: pendingMsg.content,
+                attachments: pendingMsg.attachments
             });
             console.log(`Message ${pendingMsg.tempId} sent, server returned:`, createdMessage.id);
 
@@ -134,8 +147,8 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
         }
     }, [thread.id, user]);
 
-    const handleSend = async (content: string) => {
-        if (!content.trim() || !user || !thread.id) return;
+    const handleSend = async (content: string, attachments?: MessageAttachment[]) => {
+        if ((!content.trim() && !attachments?.length) || !user || !thread.id) return;
 
         const originalMessage = content.trim();
         const tempId = `temp-${Date.now()}`;
@@ -145,6 +158,7 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
             senderId: user.id,
             threadId: thread.id,
             content: originalMessage,
+            attachments: attachments || null,
             createdAt: new Date().toISOString(),
             sender: {
                 id: user.id,
@@ -162,6 +176,7 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
         pendingQueueRef.current.push({
             tempId,
             content: originalMessage,
+            attachments,
             timestamp: Date.now(),
             retries: 0
         });
@@ -185,6 +200,7 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
             senderId: payload.senderId || sender?.id,
             threadId: payload.threadId || payload.channelId,
             content: payload.content,
+            attachments: payload.attachments || null,
             createdAt: payload.createdAt,
             sender: sender ? {
                 id: sender.id,
@@ -406,6 +422,11 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                                     <Text className="text-gray-800 dark:text-gray-100 text-base leading-6">
                                         {item.content}
                                     </Text>
+                                    
+                                    {/* Attachments */}
+                                    {item.attachments && item.attachments.length > 0 && (
+                                        <AttachmentsList attachments={item.attachments} />
+                                    )}
                                     
                                     {isPending && (
                                         <Text className="text-[10px] text-gray-400 mt-1">Sending...</Text>

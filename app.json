@@ -39,7 +39,9 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-image-picker",
+      "expo-document-picker"
     ],
     "experiments": {
       "typedRoutes": true,

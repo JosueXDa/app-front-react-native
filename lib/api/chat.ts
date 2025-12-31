@@ -1,5 +1,19 @@
 import { axiosInstance } from "./axios";
 
+// ============ Helper Functions ============
+
+/**
+ * Determina el tipo de attachment basado en el mimeType
+ */
+export function getAttachmentType(mimeType: string): AttachmentType {
+    if (mimeType.startsWith('image/')) return 'image';
+    if (mimeType.startsWith('video/')) return 'video';
+    if (mimeType.startsWith('audio/')) return 'audio';
+    return 'document';
+}
+
+// ============ Channel Interfaces ============
+
 export interface Channel {
     id: string;
     name: string;
@@ -185,6 +199,30 @@ export const deleteThread = async (threadId: string): Promise<{ message: string 
 };
 
 // Message Interfaces
+
+/**
+ * Tipo de attachment basado en el MIME type
+ */
+export type AttachmentType = 'image' | 'document' | 'video' | 'audio';
+
+/**
+ * Estructura de un attachment de mensaje
+ */
+export interface MessageAttachment {
+    /** UUID único del attachment */
+    id: string;
+    /** URL pública del archivo */
+    url: string;
+    /** Nombre original del archivo */
+    filename: string;
+    /** Tipo MIME (image/png, application/pdf, etc.) */
+    mimeType: string;
+    /** Tamaño en bytes */
+    size: number;
+    /** Categoría para renderizado */
+    type: AttachmentType;
+}
+
 export interface UserProfile {
     displayName: string;
     avatarUrl: string | null;
@@ -196,20 +234,28 @@ export interface MessageSender {
     profile: UserProfile;
 }
 
+/**
+ * Mensaje con información del remitente (usado en GET y WebSocket)
+ */
 export interface Message {
     id: string;
     senderId: string;
     threadId: string;
     content: string;
+    attachments: MessageAttachment[] | null;
     createdAt: string;
     sender: MessageSender;
     // ⚠️ DEPRECATED: Kept for backward compatibility
     channelId?: string;
 }
 
+/**
+ * DTO para crear un mensaje nuevo
+ */
 export interface CreateMessageDto {
     threadId?: string; // Changed from channelId to threadId
     content: string;
+    attachments?: MessageAttachment[];
     // ⚠️ DEPRECATED: Use 'threadId' instead. Kept for backward compatibility
     channelId?: string;
 }
@@ -226,10 +272,21 @@ export const createMessage = async (data: CreateMessageDto): Promise<Message> =>
     if (!threadId) {
         throw new Error('Either threadId or channelId must be provided');
     }
-    const payload = {
+    
+    const payload: {
+        threadId: string;
+        content: string;
+        attachments?: MessageAttachment[];
+    } = {
         threadId,
         content: data.content
     };
+    
+    // Incluir attachments si existen
+    if (data.attachments && data.attachments.length > 0) {
+        payload.attachments = data.attachments;
+    }
+    
     const response = await axiosInstance.post<Message>("/api/chats/messages", payload);
     return response.data;
 };
