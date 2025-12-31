@@ -20,6 +20,7 @@ export interface Channel {
     description?: string | null;
     isPrivate: boolean;
     imageUrl?: string | null;
+    bannerUrl?: string | null;
     category?: string;
     ownerId?: string;
     createdAt: string;
@@ -38,6 +39,8 @@ export interface CreateChannelDto {
     name: string;
     description?: string | null;
     isPrivate?: boolean;
+    imageUrl?: string | null;
+    bannerUrl?: string | null;
     category?: string;
     memberIds?: string[];
     ownerId?: string;
@@ -48,6 +51,7 @@ export interface UpdateChannelDto {
     description?: string | null;
     isPrivate?: boolean;
     imageUrl?: string | null;
+    bannerUrl?: string | null;
     category?: string;
 }
 

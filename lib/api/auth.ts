@@ -16,6 +16,7 @@ export interface Profile {
     userId: string;
     displayName?: string;
     avatarUrl?: string | null;
+    bannerUrl?: string | null;
     bio?: string | null;
     age?: number | null;
     isOnline?: boolean;

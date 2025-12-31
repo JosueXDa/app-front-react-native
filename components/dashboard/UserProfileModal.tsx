@@ -8,7 +8,7 @@ import {
 import { User } from '@/lib/api/auth';
 import { X } from 'lucide-react-native';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -26,7 +26,13 @@ export function UserProfileModal({ isOpen, onClose, user }: UserProfileModalProp
       <ModalBackdrop />
       <ModalContent className="bg-white dark:bg-[#18191c] p-0 overflow-hidden">
         {/* Banner Color */}
-        <View className="h-24 bg-primary-500 w-full" />
+        <View className="h-24 w-full">
+            <Image
+                source={{ uri: user.profile?.bannerUrl || 'https://placehold.co/600x400'}}
+                alt="User Banner"
+                className="w-full h-24 rounded-lg object-cover"
+            />
+        </View>
         
         <View className="px-4 pb-4 relative">
             {/* Avatar */}

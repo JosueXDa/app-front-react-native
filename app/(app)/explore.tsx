@@ -1,12 +1,12 @@
-import { ChannelCard } from '@/components/explore/ChannelCard';
+import { ChannelDetailModal } from '@/components/explore/ChannelDetailModal';
+import { ChannelGridCard } from '@/components/explore/ChannelGridCard';
+import { Grid, GridItem } from '@/components/ui/grid';
 import { Channel, getChannels } from '@/lib/api/chat';
-import { useRouter } from 'expo-router';
 import { Filter, Search } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, TextInput, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, TextInput, useColorScheme, View } from 'react-native';
 
 export default function Explore() {
-    const router = useRouter();
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
 
@@ -17,6 +17,8 @@ export default function Explore() {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const LIMIT = 15;
 
@@ -78,14 +80,30 @@ export default function Explore() {
         }
     };
 
+    const handleChannelPress = (channel: Channel) => {
+        setSelectedChannel(channel);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedChannel(null);
+    };
+
+    const handleScroll = (event: any) => {
+        const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+        const paddingToBottom = 20;
+        const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+        
+        if (isCloseToBottom && !loadingMore && hasMore && !loading) {
+            loadMore();
+        }
+    };
+
     // Simple client-side filtering for demonstration since API doesn't support search yet
     // const filteredChannels = channels.filter(channel =>
     //     channel.name.toLowerCase().includes(searchQuery.toLowerCase())
     // );
-
-    const renderItem = ({ item }: { item: Channel }) => (
-        <ChannelCard channel={item} />
-    );
 
     return (
         <View className="flex-1 bg-gray-50 dark:bg-gray-900">
@@ -126,32 +144,63 @@ export default function Explore() {
                     <ActivityIndicator size="large" color="#2563eb" />
                 </View>
             ) : (
-                <FlatList
-                    data={channels}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={{ paddingBottom: 20 }}
-                    onEndReached={loadMore}
-                    onEndReachedThreshold={0.5}
+                <ScrollView
+                    contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
                     refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={isDark ? '#ffffff' : '#000000'} />
+                        <RefreshControl 
+                            refreshing={refreshing} 
+                            onRefresh={handleRefresh} 
+                            tintColor={isDark ? '#ffffff' : '#000000'} 
+                        />
                     }
-                    ListFooterComponent={
-                        loadingMore ? (
-                            <View className="py-4">
-                                <ActivityIndicator size="small" color="#2563eb" />
-                            </View>
-                        ) : null
-                    }
-                    ListEmptyComponent={
+                    onScroll={handleScroll}
+                    scrollEventThrottle={400}
+                >
+                    {channels.length === 0 ? (
                         <View className="items-center justify-center py-20">
                             <Text className="text-gray-500 dark:text-gray-400 text-lg">
-                                No channels found
+                                No se encontraron canales
                             </Text>
                         </View>
-                    }
-                />
+                    ) : (
+                        <>
+                            <Grid
+                                className="gap-4"
+                                _extra={{
+                                    className: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+                                }}
+                            >
+                                {channels.map((channel) => (
+                                    <GridItem
+                                        key={channel.id}
+                                        _extra={{
+                                            className: 'col-span-1',
+                                        }}
+                                    >
+                                        <ChannelGridCard 
+                                            channel={channel} 
+                                            onPress={() => handleChannelPress(channel)}
+                                        />
+                                    </GridItem>
+                                ))}
+                            </Grid>
+
+                            {loadingMore && (
+                                <View className="py-6">
+                                    <ActivityIndicator size="small" color="#2563eb" />
+                                </View>
+                            )}
+                        </>
+                    )}
+                </ScrollView>
             )}
+
+            {/* Modal */}
+            <ChannelDetailModal
+                channel={selectedChannel}
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+            />
         </View>
     );
 }
