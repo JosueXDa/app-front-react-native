@@ -24,10 +24,7 @@ export default function ChannelScreen() {
     const isDesktop = width >= 768;
     
     const { selectedChannel, setSelectedChannel } = useSelectedChannel();
-    const [channel, setChannel] = useState<Channel | null>(
-        selectedChannel?.id === channelId ? selectedChannel : null
-    );
-    const setSelectedChannelRef = React.useCallback(setSelectedChannel, [setSelectedChannel]);
+    const [channel, setChannel] = useState<Channel | null>(null);
     const [threads, setThreads] = useState<Thread[]>([]);
     const [memberCount, setMemberCount] = useState<number>(0);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -37,7 +34,6 @@ export default function ChannelScreen() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     
     // Estado para manejar el thread seleccionado en desktop
-    const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
     const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
     
     const { user } = useAuth();
@@ -46,7 +42,7 @@ export default function ChannelScreen() {
         router.back();
     };
 
-    // Fetch channel data
+    // Fetch channel data - Solo se ejecuta cuando cambia channelId
     useEffect(() => {
         const fetchChannel = async () => {
             if (!channelId) return;
@@ -55,16 +51,20 @@ export default function ChannelScreen() {
                 setIsLoading(true);
                 setError(null);
                 
-                // If the channel from context matches channelId, use it
+                // Primero intentar usar el canal del contexto si coincide
                 if (selectedChannel?.id === channelId) {
                     setChannel(selectedChannel);
                     console.log('[ChannelScreen] Using channel from context:', selectedChannel.name);
                 } else {
-                    // Otherwise, fetch the channel
+                    // Si no coincide, buscar el canal
                     console.log('[ChannelScreen] Fetching channel data for:', channelId);
                     const fetchedChannel = await getChannelById(channelId);
                     setChannel(fetchedChannel);
-                    setSelectedChannelRef(fetchedChannel);
+                    
+                    // Solo actualizar el contexto si es diferente al actual
+                    if (selectedChannel?.id !== fetchedChannel.id) {
+                        setSelectedChannel(fetchedChannel);
+                    }
                 }
             } catch (err) {
                 console.error('Failed to fetch channel:', err);
@@ -75,7 +75,8 @@ export default function ChannelScreen() {
         };
         
         fetchChannel();
-    }, [channelId, selectedChannel, setSelectedChannelRef]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [channelId]); // Intencionalmente solo channelId para evitar ciclos de actualización
 
     // Fetch channel members and check admin role
     useEffect(() => {
@@ -120,7 +121,6 @@ export default function ChannelScreen() {
     const handleThreadPress = async (thread: Thread) => {
         if (isDesktop) {
             // En desktop, actualizar el estado local
-            setSelectedThreadId(thread.id);
             setSelectedThread(thread);
         } else {
             // En mobile, navegar a la ruta

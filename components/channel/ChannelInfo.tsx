@@ -10,6 +10,9 @@ interface ChannelInfoProps {
 }
 
 export function ChannelInfo({ channel, memberCount }: ChannelInfoProps) {
+    const listCategories = channel.category ? channel.category.split(', ') : ['General'];
+
+
     return (
         <View className="p-4 border-b border-gray-200 dark:border-gray-700">
             <View className="flex-row items-center mb-3">
@@ -51,11 +54,13 @@ export function ChannelInfo({ channel, memberCount }: ChannelInfoProps) {
             
             {channel.category && (
                 <View className="flex-row items-center">
-                    <View className="bg-primary-100 dark:bg-primary-900 px-2 py-1 rounded">
-                        <Text className="text-xs font-medium text-primary-700 dark:text-primary-300">
-                            {channel.category}
-                        </Text>
-                    </View>
+                        {listCategories.map((category, index) => (
+                            <View key={index} className="bg-primary-100 dark:bg-primary-900 px-2 py-1 mr-2 rounded">
+                                <Text className="text-xs font-medium text-primary-700 dark:text-primary-300">
+                                    {category}
+                                </Text>
+                            </View>
+                        ))}
                 </View>
             )}
         </View>

@@ -10,9 +10,7 @@ export default function ThreadScreen() {
     const router = useRouter();
     
     const { selectedChannel } = useSelectedChannel();
-    const [channel, setChannel] = useState<Channel | null>(
-        selectedChannel?.id === channelId ? selectedChannel : null
-    );
+    const [channel, setChannel] = useState<Channel | null>(null);
     const [thread, setThread] = useState<Thread | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -51,7 +49,8 @@ export default function ThreadScreen() {
             }
         };
         fetchThreadAndChannel();
-    }, [threadId, channelId, selectedChannel]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [threadId, channelId]); // Solo threadId y channelId para evitar ciclos
 
     if (isLoading) {
         return (
