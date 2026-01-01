@@ -46,6 +46,22 @@ export interface AuthResponse {
     session: Session;
 }
 
+export interface ProfileUpdate {
+    displayName?: string;
+    avatarUrl?: string | null;
+    bannerUrl?: string | null;
+    bio?: string | null;
+    age?: number | null;
+    isOnline?: boolean;
+}
+
+export interface UserUpdate {
+    email?: string;
+    name?: string;
+    emailVerified?: boolean;
+    profile?: ProfileUpdate;
+}
+
 export const authApi = {
     login: async (data: LoginRequest) => {
         const response = await axiosInstance.post<AuthResponse>("/api/auth/sign-in/email", data);
@@ -87,5 +103,9 @@ export const authApi = {
     },
     logout: async () => {
         await axiosInstance.post("/api/auth/sign-out");
+    },
+    updateProfile: async (userId: string, updateData: UserUpdate) => {
+        const response = await axiosInstance.patch<User>(`/api/users/${userId}`, updateData);
+        return response.data;
     }
 };

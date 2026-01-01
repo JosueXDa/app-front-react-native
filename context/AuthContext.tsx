@@ -9,6 +9,7 @@ interface AuthContextType {
     signIn: (data: LoginRequest) => Promise<void>;
     signUp: (data: RegisterRequest) => Promise<void>;
     signOut: (data?: any) => Promise<void>;
+    updateUser: (updatedUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -84,8 +85,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
     };
 
+    const updateUser = (updatedUser: User) => {
+        setUser(updatedUser);
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

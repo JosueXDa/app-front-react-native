@@ -1,3 +1,4 @@
+import { ImageFile, ImageUploader } from '@/components/image-picker';
 import { Button, ButtonSpinner, ButtonText } from '@/components/ui/button';
 import {
     FormControl,
@@ -10,7 +11,7 @@ import {
     FormControlLabelText
 } from '@/components/ui/form-control';
 import { HStack } from '@/components/ui/hstack';
-import { Icon, AlertCircleIcon, CheckCircleIcon, CloseIcon, AddIcon } from '@/components/ui/icon';
+import { AlertCircleIcon, CheckCircleIcon, CloseIcon, Icon } from '@/components/ui/icon';
 import { Input, InputField } from '@/components/ui/input';
 import {
     Modal,
@@ -21,14 +22,13 @@ import {
     ModalFooter,
     ModalHeader
 } from '@/components/ui/modal';
-import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
+import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
 import { VStack } from '@/components/ui/vstack';
 import { useChannels } from '@/context/ChannelContex';
 import { createChannel } from '@/lib/api/chat';
-import { uploadChannelIcon, uploadChannelBanner } from '@/lib/api/upload';
+import { uploadChannelBanner, uploadChannelIcon } from '@/lib/api/upload';
 import { useState } from 'react';
-import { Switch, Text, Image, TouchableOpacity, Platform, ScrollView } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { ScrollView, Switch, Text } from 'react-native';
 
 interface CreateChannelModalProps {
     isOpen: boolean;
@@ -50,8 +50,8 @@ export function CreateChannelModal({ isOpen, onClose }: CreateChannelModalProps)
     }>({});
 
     // Image states
-    const [avatarImage, setAvatarImage] = useState<{ uri: string; name: string; type: string } | null>(null);
-    const [bannerImage, setBannerImage] = useState<{ uri: string; name: string; type: string } | null>(null);
+    const [avatarImage, setAvatarImage] = useState<ImageFile | null>(null);
+    const [bannerImage, setBannerImage] = useState<ImageFile | null>(null);
     const [isUploadingImages, setIsUploadingImages] = useState(false);
 
     const { refreshChannels } = useChannels();
@@ -76,75 +76,19 @@ export function CreateChannelModal({ isOpen, onClose }: CreateChannelModalProps)
         return Object.keys(newErrors).length === 0;
     };
 
-    const pickImage = async (type: 'avatar' | 'banner') => {
-        try {
-            // Request permission
-            if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                    toast.show({
-                        placement: "top right",
-                        render: ({ id }) => (
-                            <Toast nativeID={`toast-${id}`} action="error" variant="outline">
-                                <HStack space="sm">
-                                    <Icon as={AlertCircleIcon} className="mt-0.5" />
-                                    <ToastTitle>Permission Required</ToastTitle>
-                                </HStack>
-                                <ToastDescription>Sorry, we need camera roll permissions to make this work!</ToastDescription>
-                            </Toast>
-                        )
-                    });
-                    return;
-                }
-            }
-
-            // Pick image
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: type === 'avatar' ? [1, 1] : [16, 9],
-                quality: 0.8,
-            });
-
-            if (!result.canceled && result.assets[0]) {
-                const asset = result.assets[0];
-                const imageFile = {
-                    uri: asset.uri,
-                    name: `${type}-${Date.now()}.jpg`,
-                    type: asset.type === 'image' ? 'image/jpeg' : asset.mimeType || 'image/jpeg'
-                };
-
-                if (type === 'avatar') {
-                    setAvatarImage(imageFile);
-                    setErrors({ ...errors, avatar: undefined });
-                } else {
-                    setBannerImage(imageFile);
-                    setErrors({ ...errors, banner: undefined });
-                }
-            }
-        } catch (error) {
-            console.error('Error picking image:', error);
-            toast.show({
-                placement: "top right",
-                render: ({ id }) => (
-                    <Toast nativeID={`toast-${id}`} action="error" variant="outline">
-                        <HStack space="sm">
-                            <Icon as={AlertCircleIcon} className="mt-0.5" />
-                            <ToastTitle>Error</ToastTitle>
-                        </HStack>
-                        <ToastDescription>Failed to pick image. Please try again.</ToastDescription>
-                    </Toast>
-                )
-            });
-        }
-    };
-
-    const removeImage = (type: 'avatar' | 'banner') => {
-        if (type === 'avatar') {
-            setAvatarImage(null);
-        } else {
-            setBannerImage(null);
-        }
+    const showErrorToast = (message: string) => {
+        toast.show({
+            placement: "top right",
+            render: ({ id }) => (
+                <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+                    <HStack space="sm">
+                        <Icon as={AlertCircleIcon} className="mt-0.5" />
+                        <ToastTitle>Error</ToastTitle>
+                    </HStack>
+                    <ToastDescription>{message}</ToastDescription>
+                </Toast>
+            )
+        });
     };
 
     const handleCreateChannel = async () => {
@@ -171,18 +115,7 @@ export function CreateChannelModal({ isOpen, onClose }: CreateChannelModalProps)
                 } catch (error: any) {
                     console.error('Failed to upload avatar:', error);
                     setErrors({ ...errors, avatar: error.message || 'Failed to upload avatar' });
-                    toast.show({
-                        placement: "top right",
-                        render: ({ id }) => (
-                            <Toast nativeID={`toast-${id}`} action="error" variant="outline">
-                                <HStack space="sm">
-                                    <Icon as={AlertCircleIcon} className="mt-0.5" />
-                                    <ToastTitle>Upload Error</ToastTitle>
-                                </HStack>
-                                <ToastDescription>Failed to upload avatar. Please try again.</ToastDescription>
-                            </Toast>
-                        )
-                    });
+                    showErrorToast('Failed to upload avatar. Please try again.');
                     setIsLoading(false);
                     setIsUploadingImages(false);
                     return;
@@ -201,18 +134,7 @@ export function CreateChannelModal({ isOpen, onClose }: CreateChannelModalProps)
                 } catch (error: any) {
                     console.error('Failed to upload banner:', error);
                     setErrors({ ...errors, banner: error.message || 'Failed to upload banner' });
-                    toast.show({
-                        placement: "top right",
-                        render: ({ id }) => (
-                            <Toast nativeID={`toast-${id}`} action="error" variant="outline">
-                                <HStack space="sm">
-                                    <Icon as={AlertCircleIcon} className="mt-0.5" />
-                                    <ToastTitle>Upload Error</ToastTitle>
-                                </HStack>
-                                <ToastDescription>Failed to upload banner. Please try again.</ToastDescription>
-                            </Toast>
-                        )
-                    });
+                    showErrorToast('Failed to upload banner. Please try again.');
                     setIsLoading(false);
                     setIsUploadingImages(false);
                     return;
@@ -404,134 +326,34 @@ export function CreateChannelModal({ isOpen, onClose }: CreateChannelModalProps)
                             </FormControl>
 
                             {/* Channel Avatar */}
-                            <FormControl isInvalid={!!errors.avatar}>
-                                <FormControlLabel>
-                                    <FormControlLabelText className="font-semibold">
-                                        Channel Avatar (Icon)
-                                    </FormControlLabelText>
-                                </FormControlLabel>
-                                <VStack className="gap-2 mt-2">
-                                    {avatarImage ? (
-                                        <HStack className="items-center gap-3">
-                                            <Image
-                                                source={{ uri: avatarImage.uri }}
-                                                style={{
-                                                    width: 80,
-                                                    height: 80,
-                                                    borderRadius: 40,
-                                                }}
-                                                resizeMode="cover"
-                                            />
-                                            <VStack className="flex-1">
-                                                <Text className="text-sm font-medium text-typography-900 dark:text-typography-50">
-                                                    {avatarImage.name}
-                                                </Text>
-                                                <Text className="text-xs text-typography-500">
-                                                    Avatar selected
-                                                </Text>
-                                            </VStack>
-                                            <TouchableOpacity
-                                                onPress={() => removeImage('avatar')}
-                                                disabled={isLoading}
-                                            >
-                                                <Icon
-                                                    as={CloseIcon}
-                                                    className="w-6 h-6 text-error-500"
-                                                />
-                                            </TouchableOpacity>
-                                        </HStack>
-                                    ) : (
-                                        <Button
-                                            variant="outline"
-                                            onPress={() => pickImage('avatar')}
-                                            disabled={isLoading}
-                                            size="md"
-                                        >
-                                            <Icon as={AddIcon} className="mr-2" />
-                                            <ButtonText>Choose Avatar</ButtonText>
-                                        </Button>
-                                    )}
-                                </VStack>
-                                {errors.avatar && (
-                                    <FormControlError className="mt-1">
-                                        <FormControlErrorIcon as={AlertCircleIcon} />
-                                        <FormControlErrorText>
-                                            {errors.avatar}
-                                        </FormControlErrorText>
-                                    </FormControlError>
-                                )}
-                                <FormControlHelper className="mt-1">
-                                    <FormControlHelperText className="text-sm">
-                                        Square image recommended. Max 5MB (JPG, PNG, GIF, WebP)
-                                    </FormControlHelperText>
-                                </FormControlHelper>
-                            </FormControl>
+                            <ImageUploader
+                                type="avatar"
+                                label="Channel Avatar (Icon)"
+                                image={avatarImage}
+                                onImageSelected={(image) => {
+                                    setAvatarImage(image);
+                                    setErrors({ ...errors, avatar: undefined });
+                                }}
+                                onImageRemoved={() => setAvatarImage(null)}
+                                error={errors.avatar}
+                                disabled={isLoading}
+                                onError={showErrorToast}
+                            />
 
                             {/* Channel Banner */}
-                            <FormControl isInvalid={!!errors.banner}>
-                                <FormControlLabel>
-                                    <FormControlLabelText className="font-semibold">
-                                        Channel Banner
-                                    </FormControlLabelText>
-                                </FormControlLabel>
-                                <VStack className="gap-2 mt-2">
-                                    {bannerImage ? (
-                                        <VStack className="gap-2">
-                                            <Image
-                                                source={{ uri: bannerImage.uri }}
-                                                style={{
-                                                    width: '100%',
-                                                    height: 120,
-                                                    borderRadius: 8,
-                                                }}
-                                                resizeMode="cover"
-                                            />
-                                            <HStack className="items-center justify-between">
-                                                <VStack className="flex-1">
-                                                    <Text className="text-sm font-medium text-typography-900 dark:text-typography-50">
-                                                        {bannerImage.name}
-                                                    </Text>
-                                                    <Text className="text-xs text-typography-500">
-                                                        Banner selected
-                                                    </Text>
-                                                </VStack>
-                                                <TouchableOpacity
-                                                    onPress={() => removeImage('banner')}
-                                                    disabled={isLoading}
-                                                >
-                                                    <Icon
-                                                        as={CloseIcon}
-                                                        className="w-6 h-6 text-error-500"
-                                                    />
-                                                </TouchableOpacity>
-                                            </HStack>
-                                        </VStack>
-                                    ) : (
-                                        <Button
-                                            variant="outline"
-                                            onPress={() => pickImage('banner')}
-                                            disabled={isLoading}
-                                            size="md"
-                                        >
-                                            <Icon as={AddIcon} className="mr-2" />
-                                            <ButtonText>Choose Banner</ButtonText>
-                                        </Button>
-                                    )}
-                                </VStack>
-                                {errors.banner && (
-                                    <FormControlError className="mt-1">
-                                        <FormControlErrorIcon as={AlertCircleIcon} />
-                                        <FormControlErrorText>
-                                            {errors.banner}
-                                        </FormControlErrorText>
-                                    </FormControlError>
-                                )}
-                                <FormControlHelper className="mt-1">
-                                    <FormControlHelperText className="text-sm">
-                                        16:9 aspect ratio recommended. Max 5MB (JPG, PNG, GIF, WebP)
-                                    </FormControlHelperText>
-                                </FormControlHelper>
-                            </FormControl>
+                            <ImageUploader
+                                type="banner"
+                                label="Channel Banner"
+                                image={bannerImage}
+                                onImageSelected={(image) => {
+                                    setBannerImage(image);
+                                    setErrors({ ...errors, banner: undefined });
+                                }}
+                                onImageRemoved={() => setBannerImage(null)}
+                                error={errors.banner}
+                                disabled={isLoading}
+                                onError={showErrorToast}
+                            />
 
                             {/* Private Channel Toggle */}
                             <FormControl>

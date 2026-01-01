@@ -146,11 +146,21 @@ export const uploadProfileAvatar = (fileUri: string, filename: string, contentTy
     uploadFile('/profile/avatar', fileUri, filename, contentType);
 
 /**
+ * Alias para uploadProfileAvatar (compatibilidad)
+ */
+export const uploadUserAvatar = uploadProfileAvatar;
+
+/**
  * Sube un banner de perfil
  * Límite: 5MB, tipos: jpeg, png, webp, gif
  */
 export const uploadProfileBanner = (fileUri: string, filename: string, contentType: string) =>
     uploadFile('/profile/banner', fileUri, filename, contentType);
+
+/**
+ * Alias para uploadProfileBanner (compatibilidad)
+ */
+export const uploadUserBanner = uploadProfileBanner;
 
 /**
  * Sube un icono de canal

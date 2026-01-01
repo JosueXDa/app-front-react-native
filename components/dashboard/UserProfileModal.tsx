@@ -1,12 +1,15 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
+import { Button, ButtonText } from '@/components/ui/button';
 import {
     Modal,
     ModalBackdrop,
     ModalCloseButton,
-    ModalContent
+    ModalContent,
+    ModalFooter
 } from '@/components/ui/modal';
+import { useAuth } from '@/context/AuthContext';
 import { User } from '@/lib/api/auth';
-import { X } from 'lucide-react-native';
+import { LogOut, X } from 'lucide-react-native';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 
@@ -17,6 +20,13 @@ interface UserProfileModalProps {
 }
 
 export function UserProfileModal({ isOpen, onClose, user }: UserProfileModalProps) {
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -62,6 +72,14 @@ export function UserProfileModal({ isOpen, onClose, user }: UserProfileModalProp
                     #{user.id.substring(0, 4)}
                 </Text>
 
+                {user.profile?.bio && (
+                    <View className="mt-4">
+                        <Text className="text-gray-700 dark:text-gray-300">
+                            {user.profile.bio}
+                        </Text>
+                    </View>
+                )}
+
                 <View className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                     <Text className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">
                         Member Since
@@ -72,6 +90,17 @@ export function UserProfileModal({ isOpen, onClose, user }: UserProfileModalProp
                 </View>
             </View>
         </View>
+
+        <ModalFooter className="border-t border-gray-200 dark:border-gray-700 pt-4 pb-4 px-4">
+          <Button
+            action="negative"
+            onPress={handleLogout}
+            className="w-full"
+          >
+            <LogOut size={18} className="text-white mr-2" />
+            <ButtonText>Log Out</ButtonText>
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
