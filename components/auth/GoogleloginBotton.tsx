@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { Alert, Pressable } from 'react-native';
 import { authClient } from '../../lib/auth-client';
 
 export const GoogleLoginButton = () => {
-
+    const [loading, setLoading] = useState(false);
     const handleGoogleLogin = async () => {
         try {
+            setLoading(true);
             // El plugin expoClient de Better Auth maneja automáticamente
             // la conversión de la URL de callback a deep link
             const { data, error } = await authClient.signIn.social({
@@ -29,7 +30,8 @@ export const GoogleLoginButton = () => {
     return (
         <Pressable
             onPress={handleGoogleLogin}
-            className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex-1 items-center"
+            disabled={loading}
+            className={`bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex-1 items-center ${loading ? 'opacity-70' : 'active:bg-gray-100 dark:active:bg-gray-700'}`}
         >
             <Ionicons name="logo-google" size={24} color="#ffff" />
         </Pressable>
