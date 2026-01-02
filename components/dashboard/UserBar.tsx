@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
-import { Headphones, Mic, MicOff, Settings } from 'lucide-react-native';
+import { Settings } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { UserProfileModal } from './UserProfileModal';
@@ -8,8 +8,7 @@ import { UserSettingsModal } from './UserSettingsModal';
 
 export function UserBar() {
     const { user } = useAuth();
-    const [isMicOn, setIsMicOn] = useState(true);
-    const [isDeafened, setIsDeafened] = useState(false);
+    
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -17,7 +16,7 @@ export function UserBar() {
 
     return (
         <>
-            <View className="absolute bottom-6 left-5 w-80 bg-white dark:bg-[#232428] p-2 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 flex-row items-center justify-between z-50">
+            <View className="absolute bottom-6 left-5 w-60 bg-white dark:bg-[#232428] p-2 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 flex-row items-center justify-between z-50">
                 <Pressable 
                     className="flex-row items-center flex-1 mr-2 hover:bg-gray-100 dark:hover:bg-[#3f4147] p-1.5 rounded-xl"
                     onPress={() => setShowProfileModal(true)}
@@ -43,26 +42,6 @@ export function UserBar() {
                 </Pressable>
 
                 <View className="flex-row items-center gap-1">
-                    <Pressable 
-                        onPress={() => setIsMicOn(!isMicOn)}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#3f4147]"
-                    >
-                        {isMicOn ? (
-                            <Mic size={18} className="text-gray-600 dark:text-[#b9bbbe]" />
-                        ) : (
-                            <MicOff size={18} color="#ed4245" />
-                        )}
-                    </Pressable>
-                    <Pressable 
-                        onPress={() => setIsDeafened(!isDeafened)}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#3f4147]"
-                    >
-                        {isDeafened ? (
-                            <HeadphonesOff size={18} color="#ed4245" />
-                        ) : (
-                            <Headphones size={18} className="text-gray-600 dark:text-[#b9bbbe]" />
-                        )}
-                    </Pressable>
                     <Pressable 
                         onPress={() => setShowSettingsModal(true)}
                         className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#3f4147]"

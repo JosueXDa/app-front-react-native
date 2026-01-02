@@ -11,6 +11,7 @@ interface ChannelSettingsMenuProps {
     channel: Channel;
     onChannelUpdate?: (channel: Channel) => void;
     children?: React.ReactNode;
+    isAdmin?: boolean;
 }
 
 type ModalType = 'basic-info' | 'members' | 'threads' | null;
@@ -18,13 +19,19 @@ type ModalType = 'basic-info' | 'members' | 'threads' | null;
 export function ChannelSettingsMenu({ 
     channel, 
     onChannelUpdate,
-    children 
+    children,
+    isAdmin = false
 }: ChannelSettingsMenuProps) {
     const [activeModal, setActiveModal] = useState<ModalType>(null);
 
     const handleSelect = (key: string) => {
         setActiveModal(key as ModalType);
     };
+
+    // Solo mostrar el menú si el usuario es administrador
+    if (!isAdmin) {
+        return null;
+    }
 
     return (
         <>

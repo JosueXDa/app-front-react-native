@@ -206,6 +206,7 @@ export default function ChannelScreen() {
                     channel={channel} 
                     memberCount={memberCount}
                     onChannelUpdate={handleChannelUpdate}
+                    isAdmin={isAdmin}
                 />
                 
                 <ThreadList

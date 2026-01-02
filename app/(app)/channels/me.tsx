@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useChannels } from '@/context/ChannelContex';
 import { useRouter } from 'expo-router';
 import { Compass, MessageCircle } from 'lucide-react-native';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ImageBackground, Pressable, ScrollView, Text, View } from 'react-native';
 
 export default function MeChannel() {
     const { user } = useAuth();
@@ -13,7 +13,12 @@ export default function MeChannel() {
     return (
         <ScrollView className="flex-1 bg-white dark:bg-gray-900">
             {/* Header */}
-            <View className="bg-[#00a884] pt-12 pb-6 px-6">
+            <ImageBackground
+                source={{uri: user?.profile?.bannerUrl || undefined }}
+                resizeMode='cover'
+                className='w-full h-40 px-4 py-6 bg-gray-800'
+            >
+
                 <View className="flex-row items-center">
                     <Avatar size='xl'>
                         <AvatarImage source={{ uri: user?.profile?.avatarUrl || undefined }} />
@@ -28,7 +33,7 @@ export default function MeChannel() {
                         </Text>
                     </View>
                 </View>
-            </View>
+            </ImageBackground>
 
             {/* Quick Stats */}
             <View className="flex-row justify-around py-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">

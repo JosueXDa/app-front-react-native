@@ -9,9 +9,10 @@ interface ChannelInfoProps {
     channel: Channel;
     memberCount?: number;
     onChannelUpdate?: (channel: Channel) => void;
+    isAdmin?: boolean;
 }
 
-export function ChannelInfo({ channel, memberCount, onChannelUpdate }: ChannelInfoProps) {
+export function ChannelInfo({ channel, memberCount, onChannelUpdate, isAdmin }: ChannelInfoProps) {
     const listCategories = channel.category ? channel.category.split(', ') : ['General'];
 
 
@@ -49,7 +50,11 @@ export function ChannelInfo({ channel, memberCount, onChannelUpdate }: ChannelIn
                     </View>
 
                     {/* Settings Menu */}
-                    <ChannelSettingsMenu channel={channel} onChannelUpdate={onChannelUpdate} />
+                    <ChannelSettingsMenu 
+                        channel={channel} 
+                        onChannelUpdate={onChannelUpdate}
+                        isAdmin={isAdmin}
+                    />
                 </View>
                 
                 {channel.description && (
