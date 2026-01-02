@@ -1,8 +1,9 @@
 import { AuthInput } from '@/components/auth/AuthInput';
 import { GithubLoginButton } from '@/components/auth/GithubLoginButton';
-import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
-import { Icon, AlertCircleIcon } from '@/components/ui/icon';
+import { GoogleLoginButton } from '@/components/auth/GoogleloginBotton';
 import { HStack } from '@/components/ui/hstack';
+import { AlertCircleIcon, Icon } from '@/components/ui/icon';
+import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
 import { useAuth } from '@/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
@@ -113,9 +114,7 @@ export default function LoginScreen() {
                     </View>
 
                     <View className="flex-row gap-4 justify-center mb-8">
-                        <Pressable className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex-1 items-center">
-                            <Ionicons name="logo-google" size={24} color="#DB4437" />
-                        </Pressable>
+                        <GoogleLoginButton />
                         <GithubLoginButton />
                     </View>
 

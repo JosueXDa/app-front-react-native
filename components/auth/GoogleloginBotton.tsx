@@ -3,19 +3,19 @@ import React from 'react';
 import { Alert, Pressable } from 'react-native';
 import { authClient } from '../../lib/auth-client';
 
-export const GithubLoginButton = () => {
+export const GoogleLoginButton = () => {
 
-    const handleGithubLogin = async () => {
+    const handleGoogleLogin = async () => {
         try {
             // El plugin expoClient de Better Auth maneja automáticamente
             // la conversión de la URL de callback a deep link
             const { data, error } = await authClient.signIn.social({
-                provider: "github",
+                provider: "google",
                 callbackURL: "http://localhost:8081/login", // Se convertirá automáticamente a appfrontnativemessages://
             });
 
             if (error) {
-                Alert.alert("Error", error.message || "No se pudo iniciar sesión con GitHub");
+                Alert.alert("Error", error.message || "No se pudo iniciar sesión con Google");
             }
             
             // El plugin maneja automáticamente el flujo OAuth
@@ -28,10 +28,10 @@ export const GithubLoginButton = () => {
 
     return (
         <Pressable
-            onPress={handleGithubLogin}
+            onPress={handleGoogleLogin}
             className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex-1 items-center"
         >
-            <Ionicons name="logo-github" size={24} color="#ffff" />
+            <Ionicons name="logo-google" size={24} color="#ffff" />
         </Pressable>
     );
 };
