@@ -118,6 +118,14 @@ export default function ChannelScreen() {
         fetchThreads();
     }, [fetchThreads]);
 
+    // Sincronizar el estado local cuando cambie el contexto
+    useEffect(() => {
+        if (selectedChannel?.id === channelId) {
+            console.log('[ChannelScreen] Syncing channel from context:', selectedChannel.name);
+            setChannel(selectedChannel);
+        }
+    }, [selectedChannel, channelId]);
+
     const handleThreadPress = async (thread: Thread) => {
         if (isDesktop) {
             // En desktop, actualizar el estado local
@@ -134,6 +142,15 @@ export default function ChannelScreen() {
 
     const handleThreadCreated = () => {
         fetchThreads();
+    };
+
+    const handleChannelUpdate = (updatedChannel: Channel) => {
+        console.log('[ChannelScreen] Channel updated:', updatedChannel.name);
+        setChannel(updatedChannel);
+        // Actualizar contexto si coincide
+        if (selectedChannel?.id === updatedChannel.id) {
+            setSelectedChannel(updatedChannel);
+        }
     };
 
     if (isLoading) {
@@ -187,7 +204,8 @@ export default function ChannelScreen() {
             >
                 <ChannelInfo 
                     channel={channel} 
-                    memberCount={memberCount} 
+                    memberCount={memberCount}
+                    onChannelUpdate={handleChannelUpdate}
                 />
                 
                 <ThreadList

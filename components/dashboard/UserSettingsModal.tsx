@@ -48,9 +48,8 @@ export function UserSettingsModal({ isOpen, onClose }: UserSettingsModalProps) {
             <X size={24} className="text-gray-500 dark:text-gray-400" />
           </ModalCloseButton>
         </ModalHeader>
-        <ModalBody className="p-0">
+        <ModalBody className="p-0 m-0">
           <View className="flex-row flex-1">
-            {/* Sidebar Navigation */}
             <View className="w-56 bg-gray-50 dark:bg-[#2f3136] border-r border-gray-200 dark:border-gray-700">
               <ScrollView className="py-4">
                 <Text className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase px-4 mb-2">
@@ -73,6 +72,7 @@ export function UserSettingsModal({ isOpen, onClose }: UserSettingsModalProps) {
                 </TouchableOpacity>
               </ScrollView>
             </View>
+            {/* Sidebar Navigation */}
 
             {/* Content Area */}
             <View className="flex-1 bg-white dark:bg-[#36393f]">

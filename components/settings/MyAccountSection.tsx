@@ -38,9 +38,9 @@ export function MyAccountSection({ user, updateUser }: MyAccountSectionProps) {
     toast.show({
       placement: "top right",
       render: ({ id }) => (
-        <Toast nativeID={`toast-${id}`} action="error" variant="outline">
-          <HStack space="sm">
-            <Icon as={AlertCircleIcon} className="mt-0.5" />
+        <Toast nativeID={`toast-${id}`} action="error" variant="outline" className="gap-2">
+          <HStack className="gap-2 items-center">
+            <Icon as={AlertCircleIcon} />
             <ToastTitle>Error</ToastTitle>
           </HStack>
           <ToastDescription>{message}</ToastDescription>
@@ -126,9 +126,9 @@ export function MyAccountSection({ user, updateUser }: MyAccountSectionProps) {
       toast.show({
         placement: "top right",
         render: ({ id }) => (
-          <Toast nativeID={`toast-${id}`} action="success" variant="outline">
-            <HStack space="sm">
-              <Icon as={CheckCircleIcon} className="mt-0.5" />
+          <Toast nativeID={`toast-${id}`} action="success" variant="outline" className="gap-2">
+            <HStack className="gap-2 items-center">
+              <Icon as={CheckCircleIcon} />
               <ToastTitle>Success</ToastTitle>
             </HStack>
             <ToastDescription>Profile updated successfully!</ToastDescription>
