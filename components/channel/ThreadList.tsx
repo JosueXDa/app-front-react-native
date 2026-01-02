@@ -23,7 +23,7 @@ export function ThreadList({
     if (isLoading) {
         return (
             <View className="flex-1 items-center justify-center">
-                <ActivityIndicator size="large" color="#6366f1" />
+                <ActivityIndicator size="large" color="rgb(var(--color-accent-500))" />
                 <Text className="text-gray-600 dark:text-gray-400 mt-2">
                     Cargando hilos...
                 </Text>

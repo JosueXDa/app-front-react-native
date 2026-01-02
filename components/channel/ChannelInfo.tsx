@@ -29,9 +29,9 @@ export function ChannelInfo({ channel, memberCount, onChannelUpdate, isAdmin }: 
                     ) : (
                         <View className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900 items-center justify-center mr-3">
                             {channel.isPrivate ? (
-                                <Lock size={24} color="#6366f1" />
+                                <Lock size={24} color="rgb(var(--color-accent-500))" />
                             ) : (
-                                <Hash size={24} color="#6366f1" />
+                                <Hash size={24} color="rgb(var(--color-accent-500))" />
                             )}
                         </View>
                     )}
@@ -41,7 +41,7 @@ export function ChannelInfo({ channel, memberCount, onChannelUpdate, isAdmin }: 
                         </Text>
                         {memberCount !== undefined && (
                             <View className="flex-row items-center mt-1">
-                                <User size={14} color="#6b7280" />
+                                <User size={14} color="rgb(var(--color-typography-600))" />
                                 <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1">
                                     {memberCount} {memberCount === 1 ? 'miembro' : 'miembros'}
                                 </Text>

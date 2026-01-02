@@ -26,14 +26,17 @@ export default function Dashboard() {
     // Desktop: show welcome screen by default
     if (isDesktop) {
         return (
-            <View className="flex-1 flex-row bg-gray-100 dark:bg-gray-900">
-                <View className="flex-1 bg-[#efeae2] dark:bg-[#0b141a]">
+            <View className="flex-1 flex-row bg-background-0">
+                <View className="flex-1 bg-background-0">
                     <View className="flex-1 items-center justify-center p-8">
-                        <Text className="text-2xl font-light text-gray-500 dark:text-gray-400 mb-4">
-                            Welcome to ChatApp
+                        <View className="bg-brand-100 dark:bg-brand-900 p-6 rounded-full mb-6">
+                            <Text className="text-4xl">💬</Text>
+                        </View>
+                        <Text className="text-2xl font-bold text-typography-900 mb-2">
+                            Bienvenido a ChatApp
                         </Text>
-                        <Text className="text-gray-400 dark:text-gray-500 text-center">
-                            Select a chat to start messaging
+                        <Text className="text-typography-500 text-center">
+                            Selecciona un canal para comenzar a chatear
                         </Text>
                     </View>
                 </View>

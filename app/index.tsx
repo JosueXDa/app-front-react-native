@@ -6,19 +6,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LandingPage() {
     return (
-        <SafeAreaView className="flex-1 bg-white dark:bg-gray-950">
+        <SafeAreaView className="flex-1 bg-background-0">
             <Stack.Screen options={{ headerShown: false }} />
             <ScrollView className="flex-1" contentContainerClassName="pb-20">
                 {/* Hero Section */}
                 <HeroSection />
 
                 {/* Features Section */}
-                <View className="px-4 py-10 bg-gray-50 dark:bg-gray-900/50">
+                <View className="px-4 py-10 bg-background-50">
                     <View className="max-w-6xl mx-auto w-full">
-                        <Text className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-4">
+                        <Text className="text-3xl font-bold text-center text-typography-900 mb-4">
                             Todo lo que necesitas
                         </Text>
-                        <Text className="text-gray-500 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+                        <Text className="text-typography-600 text-center mb-12 max-w-2xl mx-auto">
                             Una plataforma robusta construida con las mejores tecnologías para garantizar velocidad y seguridad.
                         </Text>
 
@@ -50,23 +50,23 @@ export default function LandingPage() {
                 {/* Tech Stack / Info */}
                 <View className="px-4 py-20">
                     <View className="max-w-4xl mx-auto w-full items-center">
-                        <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+                        <Text className="text-2xl font-bold text-typography-900 mb-8">
                             Potenciado por Tecnología Moderna
                         </Text>
                         <View className="flex-row flex-wrap justify-center gap-8 opacity-70">
-                            <Text className="text-xl font-semibold text-gray-400">Bun</Text>
-                            <Text className="text-xl font-semibold text-gray-400">Hono</Text>
-                            <Text className="text-xl font-semibold text-gray-400">React Native</Text>
-                            <Text className="text-xl font-semibold text-gray-400">Expo</Text>
-                            <Text className="text-xl font-semibold text-gray-400">NativeWind</Text>
+                            <Text className="text-xl font-semibold text-typography-500">Bun</Text>
+                            <Text className="text-xl font-semibold text-typography-500">Hono</Text>
+                            <Text className="text-xl font-semibold text-typography-500">React Native</Text>
+                            <Text className="text-xl font-semibold text-typography-500">Expo</Text>
+                            <Text className="text-xl font-semibold text-typography-500">NativeWind</Text>
                         </View>
                     </View>
                 </View>
 
                 {/* Footer */}
-                <View className="border-t border-gray-100 dark:border-gray-800 py-8 items-center">
-                    <Text className="text-gray-400 text-sm">
-                        © 2025 AppMensajería. Todos los derechos reservados.
+                <View className="border-t border-outline-200 py-8 items-center">
+                    <Text className="text-typography-500 text-sm">
+                        © 2026 ThreadLink. Todos los derechos reservados.
                     </Text>
                 </View>
             </ScrollView>

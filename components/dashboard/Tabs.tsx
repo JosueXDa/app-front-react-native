@@ -1,21 +1,21 @@
+import { useTheme } from '@/context/ThemeContext';
 import { Tabs } from 'expo-router';
 import { Home, User } from 'lucide-react-native';
-import { useColorScheme } from 'react-native';
 
 export function DashboardTabs() {
-    const colorScheme = useColorScheme();
-    const isDark = colorScheme === 'dark';
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === 'dark';
 
     return (
         <Tabs
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
-                    backgroundColor: isDark ? '#111827' : '#ffffff',
-                    borderTopColor: isDark ? '#1f2937' : '#e5e7eb',
+                    backgroundColor: isDark ? 'rgb(var(--color-background-0))' : 'rgb(var(--color-background-0))',
+                    borderTopColor: isDark ? 'rgb(var(--color-outline-200))' : 'rgb(var(--color-outline-200))',
                 },
-                tabBarActiveTintColor: '#00a884',
-                tabBarInactiveTintColor: '#9ca3af',
+                tabBarActiveTintColor: 'rgb(var(--color-brand-500))',
+                tabBarInactiveTintColor: 'rgb(var(--color-typography-400))',
             }}
         >
             <Tabs.Screen

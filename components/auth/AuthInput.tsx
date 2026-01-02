@@ -16,8 +16,8 @@ export function AuthInput({ label, iconName, error, ...props }: AuthInputProps) 
             <Text className="text-gray-700 dark:text-gray-300 font-medium mb-2 ml-1">
                 {label}
             </Text>
-            <View className={`flex-row items-center bg-gray-50 dark:bg-gray-800 border rounded-xl px-4 py-3 ${error ? 'border-red-500' : isFocused ? 'border-blue-500' : 'border-gray-200 dark:border-gray-700'}`}>
-                <Ionicons name={iconName} size={20} color={isFocused ? "#3b82f6" : "#9ca3af"} style={{ marginRight: 10 }} />
+            <View className={`flex-row items-center bg-gray-50 dark:bg-gray-800 border rounded-xl px-4 py-3 ${error ? 'border-error-500' : isFocused ? 'border-brand-500' : 'border-outline-300'}`}>
+                <Ionicons name={iconName} size={20} color={isFocused ? "rgb(var(--color-brand-500))" : "rgb(var(--color-typography-400))"} style={{ marginRight: 10 }} />
                 <TextInput
                     className="flex-1 text-gray-900 dark:text-white text-base web:outline-none"
                     placeholderTextColor="#9ca3af"

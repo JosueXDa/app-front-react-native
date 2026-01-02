@@ -106,34 +106,34 @@ export default function Explore() {
     // );
 
     return (
-        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
+        <View className="flex-1 bg-background-0">
             {/* Header Area */}
-            <View className="bg-white dark:bg-gray-900 px-4 py-4 shadow-sm z-10">
-                <Text className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            <View className="bg-background-0 px-4 py-4 shadow-sm z-10 border-b border-outline-200">
+                <Text className="text-2xl font-bold text-typography-900 mb-4">
                     Explore
                 </Text>
 
                 {/* Search and Filter Row */}
                 <View className="flex-row items-center space-x-3 gap-3">
-                    <View className="flex-1 flex-row items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4 h-12 border border-gray-200 dark:border-gray-700 shadow-sm">
-                        <Search size={20} color={isDark ? '#9ca3af' : '#6b7280'} />
+                    <View className="flex-1 flex-row items-center bg-background-50 rounded-xl px-4 h-12 border border-outline-300">
+                        <Search size={20} color="rgb(var(--color-typography-600))" />
                         <TextInput
-                            className="flex-1 ml-3 text-base text-gray-900 dark:text-white"
+                            className="flex-1 ml-3 text-base text-typography-900"
                             placeholder="Search channels..."
-                            placeholderTextColor={isDark ? '#9ca3af' : '#6b7280'}
+                            placeholderTextColor="rgb(var(--color-typography-400))"
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                         />
                     </View>
 
                     <Pressable
-                        className="h-12 w-12 items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 active:bg-gray-200 dark:active:bg-gray-700"
+                        className="h-12 w-12 items-center justify-center bg-background-50 rounded-xl border border-outline-300 active:bg-background-100"
                         onPress={() => {
                             // Filter logic placeholder
                             console.log('Filter pressed');
                         }}
                     >
-                        <Filter size={20} color={isDark ? '#9ca3af' : '#6b7280'} />
+                        <Filter size={20} color="rgb(var(--color-typography-600))" />
                     </Pressable>
                 </View>
             </View>
@@ -141,7 +141,7 @@ export default function Explore() {
             {/* Content */}
             {loading ? (
                 <View className="flex-1 items-center justify-center">
-                    <ActivityIndicator size="large" color="#2563eb" />
+                    <ActivityIndicator size="large" color="rgb(var(--color-brand-500))" />
                 </View>
             ) : (
                 <ScrollView
@@ -150,7 +150,7 @@ export default function Explore() {
                         <RefreshControl 
                             refreshing={refreshing} 
                             onRefresh={handleRefresh} 
-                            tintColor={isDark ? '#ffffff' : '#000000'} 
+                            tintColor="rgb(var(--color-brand-500))" 
                         />
                     }
                     onScroll={handleScroll}
@@ -158,7 +158,10 @@ export default function Explore() {
                 >
                     {channels.length === 0 ? (
                         <View className="items-center justify-center py-20">
-                            <Text className="text-gray-500 dark:text-gray-400 text-lg">
+                            <View className="bg-brand-100 dark:bg-brand-900 p-6 rounded-full mb-4">
+                                <Text className="text-4xl">🔍</Text>
+                            </View>
+                            <Text className="text-typography-600 text-lg font-medium">
                                 No se encontraron canales
                             </Text>
                         </View>
@@ -187,7 +190,7 @@ export default function Explore() {
 
                             {loadingMore && (
                                 <View className="py-6">
-                                    <ActivityIndicator size="small" color="#2563eb" />
+                                    <ActivityIndicator size="small" color="rgb(var(--color-brand-500))" />
                                 </View>
                             )}
                         </>

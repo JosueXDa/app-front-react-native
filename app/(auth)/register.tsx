@@ -1,7 +1,7 @@
 import { AuthInput } from '@/components/auth/AuthInput';
-import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
-import { Icon, AlertCircleIcon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
+import { AlertCircleIcon, Icon } from '@/components/ui/icon';
+import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useState } from 'react';
@@ -79,8 +79,8 @@ export default function RegisterScreen() {
         <SafeAreaView className="flex-1 bg-white dark:bg-gray-950">
             <ScrollView contentContainerClassName="flex-grow justify-center px-6 py-10">
                 <View className="items-center mb-10">
-                    <View className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-full mb-4">
-                        <Ionicons name="person-add" size={40} color="#3b82f6" />
+                    <View className="bg-brand-100 dark:bg-brand-900 p-4 rounded-full mb-4">
+                        <Ionicons name="person-add" size={40} color="rgb(var(--color-brand-500))" />
                     </View>
                     <Text className="text-3xl font-bold text-gray-900 dark:text-white text-center">
                         Crear Cuenta
@@ -128,7 +128,7 @@ export default function RegisterScreen() {
                     />
 
                     <Pressable
-                        className={`bg-blue-600 py-4 rounded-xl items-center shadow-lg shadow-blue-500/30 mt-4 ${loading ? 'opacity-70' : 'active:bg-blue-700'}`}
+                        className={`bg-brand-500 py-4 rounded-xl items-center shadow-lg shadow-brand-500/30 mt-4 ${loading ? 'opacity-70' : 'active:bg-brand-600'}`}
                         onPress={handleRegister}
                         disabled={loading}
                     >
@@ -138,10 +138,10 @@ export default function RegisterScreen() {
                     </Pressable>
 
                     <View className="flex-row justify-center mt-8">
-                        <Text className="text-gray-600 dark:text-gray-400">¿Ya tienes una cuenta? </Text>
+                        <Text className="text-typography-600">¿Ya tienes una cuenta? </Text>
                         <Link href="/(auth)/login" asChild>
                             <Pressable>
-                                <Text className="text-blue-500 font-bold">Inicia Sesión</Text>
+                                <Text className="text-brand-500 font-bold">Inicia Sesión</Text>
                             </Pressable>
                         </Link>
                     </View>

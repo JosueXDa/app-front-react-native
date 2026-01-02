@@ -42,11 +42,11 @@ export function UserBar() {
                 </Pressable>
 
                 <View className="flex-row items-center gap-1">
-                    <Pressable 
+                    <Pressable
                         onPress={() => setShowSettingsModal(true)}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#3f4147]"
+                        className="p-2 rounded-full hover:bg-background-50"
                     >
-                        <Settings size={18} className="text-gray-600 dark:text-[#b9bbbe]" />
+                        <Settings size={18} className="text-typography-600" />
                     </Pressable>
                 </View>
             </View>

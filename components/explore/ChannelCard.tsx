@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage, AvatarFallbackText } from '@/components/ui/avatar';
+import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useChannels } from '@/context/ChannelContex';
 import { Channel, isJoined as checkIsJoined, joinChannel } from '@/lib/api/chat';
 import { useRouter } from 'expo-router';
@@ -48,7 +48,7 @@ export function ChannelCard({ channel }: ChannelCardProps) {
     };
 
     return (
-        <View className="flex-row items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl mx-4 my-2 shadow-sm border border-gray-100 dark:border-gray-700">
+        <View className="flex-row items-center justify-between p-4 bg-background-0 rounded-xl mx-4 my-2 shadow-sm border border-outline-200">
             <View className="mr-3">
                 <Avatar size="lg">
                     {channel.imageUrl ? (
@@ -59,20 +59,20 @@ export function ChannelCard({ channel }: ChannelCardProps) {
                 </Avatar>
             </View>
             <View className="flex-1 mr-4">
-                <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                <Text className="text-lg font-semibold text-typography-900 mb-1">
                     {channel.name}
                 </Text>
                 {channel.description && (
-                    <Text className="text-sm text-gray-500 dark:text-gray-400" numberOfLines={2}>
+                    <Text className="text-sm text-typography-600" numberOfLines={2}>
                         {channel.description}
                     </Text>
                 )}
                 <View className="flex-row items-center mt-2">
-                    <Text className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+                    <Text className="text-xs text-typography-500 bg-background-50 px-2 py-0.5 rounded">
                         {channel.isPrivate ? 'Private' : 'Public'}
                     </Text>
                     {channel.category && (
-                        <Text className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded ml-2">
+                        <Text className="text-xs text-typography-500 bg-background-50 px-2 py-0.5 rounded ml-2">
                             {channel.category}
                         </Text>
                     )}
@@ -81,14 +81,14 @@ export function ChannelCard({ channel }: ChannelCardProps) {
 
             {isJoined ? (
                 <Pressable
-                    className="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded-lg active:opacity-80"
+                    className="bg-background-100 px-4 py-2 rounded-lg active:opacity-80"
                     onPress={handleView}
                 >
-                    <Text className="text-gray-900 dark:text-white font-medium">View</Text>
+                    <Text className="text-typography-900 font-medium">View</Text>
                 </Pressable>
             ) : (
                 <Pressable
-                    className="bg-blue-600 px-4 py-2 rounded-lg active:opacity-80 min-w-[70px] items-center"
+                    className="bg-brand-500 px-4 py-2 rounded-lg active:opacity-80 min-w-[70px] items-center"
                     onPress={handleJoin}
                     disabled={loading}
                 >

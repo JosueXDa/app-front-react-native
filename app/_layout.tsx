@@ -1,4 +1,4 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -8,8 +8,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import '@/global.css';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
   anchor: '(app)',
@@ -50,19 +50,35 @@ function RootLayoutNav() {
   return <Slot />;
 }
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function ThemedApp() {
+  const { resolvedTheme, isLoading } = useTheme();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
+        <ActivityIndicator size="large" color="#00a884" />
+      </View>
+    );
+  }
 
   return (
-    <GluestackUIProvider mode="dark">
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <GluestackUIProvider mode={resolvedTheme}>
+      <NavigationThemeProvider value={resolvedTheme === 'dark' ? DarkTheme : DefaultTheme}>
         <SafeAreaProvider>
           <AuthProvider>
             <RootLayoutNav />
             <StatusBar style="auto" />
           </AuthProvider>
         </SafeAreaProvider>
-      </ThemeProvider>
+      </NavigationThemeProvider>
     </GluestackUIProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <ThemedApp />
+    </ThemeProvider>
   );
 }

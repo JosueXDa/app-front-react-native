@@ -1,14 +1,15 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { useRouter } from 'expo-router';
 import { LogOut, Moon, Sun, User } from 'lucide-react-native';
-import { Pressable, ScrollView, Switch, Text, useColorScheme, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 export default function SettingsScreen() {
     const { user, signOut } = useAuth();
     const router = useRouter();
-    const colorScheme = useColorScheme();
-    const isDark = colorScheme === 'dark';
+    const { resolvedTheme, toggleTheme } = useTheme();
+    const isDark = resolvedTheme === 'dark';
 
     const handleLogout = async () => {
         await signOut();
@@ -18,7 +19,7 @@ export default function SettingsScreen() {
     return (
         <ScrollView className="flex-1 bg-white dark:bg-gray-900">
             {/* Header */}
-            <View className="bg-[#00a884] pt-12 pb-8 px-6">
+            <View className="bg-brand-500 pt-12 pb-8 px-6">
                 <Text className="text-white text-2xl font-bold mb-2">Settings</Text>
                 <Text className="text-white/80 text-sm">Manage your account and preferences</Text>
             </View>
@@ -72,11 +73,8 @@ export default function SettingsScreen() {
                     </View>
                     <Switch
                         value={isDark}
-                        onValueChange={() => {
-                            // TODO: Implementar toggle de tema
-                            console.log('Toggle theme');
-                        }}
-                        trackColor={{ false: '#d1d5db', true: '#00a884' }}
+                        onValueChange={toggleTheme}
+                        trackColor={{ false: '#d1d5db', true: 'rgb(var(--color-brand-500))' }}
                         thumbColor={isDark ? '#fff' : '#f3f4f6'}
                     />
                 </View>

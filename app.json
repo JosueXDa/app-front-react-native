@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "app-front-native-messages",
-    "slug": "app-front-native-messages",
+    "name": "ThreadLink",
+    "slug": "threadlink",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "appfrontnativemessages",
+    "scheme": "threadlink",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

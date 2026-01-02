@@ -17,7 +17,7 @@ export function ChannelGridCard({ channel, onPress }: ChannelGridCardProps) {
             <Card 
                 variant="elevated" 
                 size="md"
-                className="bg-white dark:bg-gray-800 overflow-hidden"
+                className="bg-background-0 overflow-hidden border border-outline-200"
             >
                 {/* Image Section */}
                 <View className="items-center pt-4 pb-3">
@@ -37,7 +37,7 @@ export function ChannelGridCard({ channel, onPress }: ChannelGridCardProps) {
                 <View className="px-4 pb-4">
                     {/* Channel Name */}
                     <Text 
-                        className="text-base font-semibold text-gray-900 dark:text-white text-center mb-2"
+                        className="text-base font-semibold text-typography-900 text-center mb-2"
                         numberOfLines={1}
                     >
                         {channel.name}
@@ -45,16 +45,16 @@ export function ChannelGridCard({ channel, onPress }: ChannelGridCardProps) {
 
                     {/* Categories */}
                     <View className="flex-row flex-wrap justify-center gap-2">
-                        <View className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
-                            <Text className="text-xs text-gray-600 dark:text-gray-300">
+                        <View className="bg-background-50 px-2 py-1 rounded-full">
+                            <Text className="text-xs text-typography-600">
                                 {channel.isPrivate ? '🔒 Privado' : '🌍 Público'}
                             </Text>
                         </View>
                         {channel.category && listCategories.map((category, index) => (
                                 <View 
                                 key={index}
-                                className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-full">
-                                    <Text className="text-xs text-blue-700 dark:text-blue-300">
+                                className="bg-brand-100 dark:bg-brand-900 px-2 py-1 rounded-full">
+                                    <Text className="text-xs text-brand-700 dark:text-brand-300">
                                         {category}
                                     </Text>
                                 </View>

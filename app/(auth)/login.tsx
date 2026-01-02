@@ -62,8 +62,8 @@ export default function LoginScreen() {
         <SafeAreaView className="flex-1 bg-white dark:bg-gray-950">
             <View className="flex-grow justify-center px-6 py-10">
                 <View className="items-center mb-10">
-                    <View className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-full mb-4">
-                        <Ionicons name="chatbubbles" size={40} color="#3b82f6" />
+                    <View className="bg-brand-100 dark:bg-brand-900 p-4 rounded-full mb-4">
+                        <Ionicons name="chatbubbles" size={40} color="rgb(var(--color-brand-500))" />
                     </View>
                     <Text className="text-3xl font-bold text-gray-900 dark:text-white text-center">
                         Bienvenido de nuevo
@@ -94,11 +94,11 @@ export default function LoginScreen() {
                     />
 
                     <Pressable className="items-end mb-6">
-                        <Text className="text-blue-500 font-medium">¿Olvidaste tu contraseña?</Text>
+                        <Text className="text-brand-500 font-medium">¿Olvidaste tu contraseña?</Text>
                     </Pressable>
 
                     <Pressable
-                        className={`bg-blue-600 py-4 rounded-xl items-center shadow-lg shadow-blue-500/30 ${loading ? 'opacity-70' : 'active:bg-blue-700'}`}
+                        className={`bg-brand-500 py-4 rounded-xl items-center shadow-lg shadow-brand-500/30 ${loading ? 'opacity-70' : 'active:bg-brand-600'}`}
                         onPress={handleLogin}
                         disabled={loading}
                     >
@@ -108,9 +108,9 @@ export default function LoginScreen() {
                     </Pressable>
 
                     <View className="flex-row items-center my-8">
-                        <View className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
-                        <Text className="mx-4 text-gray-400">O continúa con</Text>
-                        <View className="flex-1 h-[1px] bg-gray-200 dark:bg-gray-800" />
+                        <View className="flex-1 h-[1px] bg-outline-200" />
+                        <Text className="mx-4 text-typography-400">O continúa con</Text>
+                        <View className="flex-1 h-[1px] bg-outline-200" />
                     </View>
 
                     <View className="flex-row gap-4 justify-center mb-8">
@@ -119,10 +119,10 @@ export default function LoginScreen() {
                     </View>
 
                     <View className="flex-row justify-center">
-                        <Text className="text-gray-600 dark:text-gray-400">¿No tienes una cuenta? </Text>
+                        <Text className="text-typography-600">¿No tienes una cuenta? </Text>
                         <Link href="/(auth)/register" asChild>
                             <Pressable>
-                                <Text className="text-blue-500 font-bold">Regístrate</Text>
+                                <Text className="text-brand-500 font-bold">Regístrate</Text>
                             </Pressable>
                         </Link>
                     </View>

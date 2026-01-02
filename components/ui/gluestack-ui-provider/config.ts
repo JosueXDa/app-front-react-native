@@ -100,6 +100,34 @@ export const config = {
     '--color-info-900': '5 64 93',
     '--color-info-950': '3 38 56',
 
+    /* Brand - Primary app color (Teal/Green) */
+    '--color-brand-0': '240 254 252',
+    '--color-brand-50': '204 255 247',
+    '--color-brand-100': '153 255 238',
+    '--color-brand-200': '102 255 230',
+    '--color-brand-300': '51 255 221',
+    '--color-brand-400': '26 219 180',
+    '--color-brand-500': '0 168 132',
+    '--color-brand-600': '0 134 106',
+    '--color-brand-700': '0 101 79',
+    '--color-brand-800': '0 67 53',
+    '--color-brand-900': '0 34 26',
+    '--color-brand-950': '0 17 13',
+
+    /* Accent - Secondary app color (Indigo) */
+    '--color-accent-0': '238 242 255',
+    '--color-accent-50': '224 231 255',
+    '--color-accent-100': '199 210 254',
+    '--color-accent-200': '165 180 252',
+    '--color-accent-300': '129 140 248',
+    '--color-accent-400': '99 102 241',
+    '--color-accent-500': '79 70 229',
+    '--color-accent-600': '67 56 202',
+    '--color-accent-700': '55 48 163',
+    '--color-accent-800': '49 46 129',
+    '--color-accent-900': '42 41 102',
+    '--color-accent-950': '30 27 75',
+
     /* Typography */
     '--color-typography-0': '254 254 255',
     '--color-typography-50': '245 245 245',
@@ -251,6 +279,34 @@ export const config = {
     '--color-info-800': '162 221 250',
     '--color-info-900': '199 235 252',
     '--color-info-950': '236 248 254',
+
+    /* Brand - Primary app color (Teal/Green) */
+    '--color-brand-0': '0 17 13',
+    '--color-brand-50': '0 34 26',
+    '--color-brand-100': '0 67 53',
+    '--color-brand-200': '0 101 79',
+    '--color-brand-300': '0 134 106',
+    '--color-brand-400': '0 168 132',
+    '--color-brand-500': '26 219 180',
+    '--color-brand-600': '51 255 221',
+    '--color-brand-700': '102 255 230',
+    '--color-brand-800': '153 255 238',
+    '--color-brand-900': '204 255 247',
+    '--color-brand-950': '240 254 252',
+
+    /* Accent - Secondary app color (Indigo) */
+    '--color-accent-0': '30 27 75',
+    '--color-accent-50': '42 41 102',
+    '--color-accent-100': '49 46 129',
+    '--color-accent-200': '55 48 163',
+    '--color-accent-300': '67 56 202',
+    '--color-accent-400': '79 70 229',
+    '--color-accent-500': '99 102 241',
+    '--color-accent-600': '129 140 248',
+    '--color-accent-700': '165 180 252',
+    '--color-accent-800': '199 210 254',
+    '--color-accent-900': '224 231 255',
+    '--color-accent-950': '238 242 255',
 
     /* Typography */
     '--color-typography-0': '23 23 23',

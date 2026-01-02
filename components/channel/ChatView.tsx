@@ -319,14 +319,14 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
     }, [thread.id, handleNewMessage, handleMessageDeleted, fetchMessages]);
 
     return (
-        <View className="flex-1 bg-white dark:bg-[#313338] relative z-10">
+        <View className="flex-1 bg-background-0 relative z-10">
             {/* Header */}
-            <View className="flex-row items-center justify-between px-4 py-3 bg-gray-100 dark:bg-[#2b2d31] border-b border-gray-200 dark:border-[#1f2023]">
+            <View className="flex-row items-center justify-between px-4 py-3 bg-background-50 border-b border-outline-200">
                 <View className="flex-row items-center">
                     {showBackButton && onBack && (
                         <View className="mr-3">
                             <Pressable onPress={onBack}>
-                                <ArrowLeft size={20} color="#54656f" />
+                                <ArrowLeft size={20} color="rgb(var(--color-typography-600))" />
                             </Pressable>
                         </View>
                     )}
@@ -340,14 +340,14 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                     </View>
                 </View>
                 <View className="flex-row items-center">
-                    <Pressable className="p-2"><MoreVertical size={20} color="#54656f" /></Pressable>
+                    <Pressable className="p-2"><MoreVertical size={20} color="rgb(var(--color-typography-600))" /></Pressable>
                 </View>
             </View>
 
             {/* Messages Area */}
             {isLoading ? (
                 <View className="flex-1 items-center justify-center">
-                    <ActivityIndicator size="large" color="#00a884" />
+                    <ActivityIndicator size="large" color="rgb(var(--color-brand-500))" />
                     <Text className="text-gray-500 dark:text-gray-400 mt-2">Loading messages...</Text>
                 </View>
             ) : error ? (
@@ -355,7 +355,7 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                     <Text className="text-red-500 dark:text-red-400 text-center mb-4">{error}</Text>
                     <Pressable
                         onPress={fetchMessages}
-                        className="bg-[#00a884] px-4 py-2 rounded-lg"
+                        className="bg-brand-500 px-4 py-2 rounded-lg"
                     >
                         <Text className="text-white">Retry</Text>
                     </Pressable>

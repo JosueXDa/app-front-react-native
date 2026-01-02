@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { Button, ButtonText } from '@/components/ui/button';
 import {
-    Modal,
-    ModalBackdrop,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter
+  Modal,
+  ModalBackdrop,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter
 } from '@/components/ui/modal';
 import { useAuth } from '@/context/AuthContext';
 import { User } from '@/lib/api/auth';
@@ -34,7 +34,7 @@ export function UserProfileModal({ isOpen, onClose, user }: UserProfileModalProp
       size="md"
     >
       <ModalBackdrop />
-      <ModalContent className="bg-white dark:bg-[#18191c] p-0 overflow-hidden">
+      <ModalContent className="bg-background-0 p-0 overflow-hidden">
         {/* Banner Color */}
         <View className="h-24 w-full">
             <Image
@@ -46,15 +46,15 @@ export function UserProfileModal({ isOpen, onClose, user }: UserProfileModalProp
         
         <View className="px-4 pb-4 relative">
             {/* Avatar */}
-            <View className="absolute -top-10 left-4 p-1.5 bg-white dark:bg-[#18191c] rounded-full">
-                <Avatar size="xl" className="border-4 border-white dark:border-[#18191c]">
+            <View className="absolute -top-10 left-4 p-1.5 bg-background-0 rounded-full">
+                <Avatar size="xl" className="border-4 border-background-0">
                     {user.profile?.avatarUrl ? (
                         <AvatarImage source={{ uri: user.profile.avatarUrl }} alt={user.profile?.displayName || user.name} />
                     ) : (
                         <AvatarFallbackText>{user.profile?.displayName || user.name}</AvatarFallbackText>
                     )}
                 </Avatar>
-                <View className="absolute bottom-0 right-0 w-6 h-6 bg-green-500 rounded-full border-4 border-white dark:border-[#18191c]" />
+                <View className="absolute bottom-0 right-0 w-6 h-6 bg-success-500 rounded-full border-4 border-background-0" />
             </View>
 
             {/* Close Button */}
