@@ -155,9 +155,9 @@ export default function ChannelScreen() {
 
     if (isLoading) {
         return (
-            <View className="flex-1 bg-white dark:bg-gray-900 items-center justify-center">
-                <ActivityIndicator size="large" color="#6366f1" />
-                <Text className="text-gray-600 dark:text-gray-400 mt-2">
+            <View className="flex-1 bg-background-0 items-center justify-center">
+                <ActivityIndicator size="large" color="rgb(var(--color-brand-500))" />
+                <Text className="text-typography-600 mt-2">
                     Cargando canal...
                 </Text>
             </View>
@@ -166,13 +166,13 @@ export default function ChannelScreen() {
 
     if (error || !channel) {
         return (
-            <View className="flex-1 bg-white dark:bg-gray-900 items-center justify-center p-4">
-                <Text className="text-red-500 text-center mb-4">
+            <View className="flex-1 bg-background-0 items-center justify-center p-4">
+                <Text className="text-error-500 text-center mb-4">
                     {error || 'Canal no encontrado'}
                 </Text>
                 <Pressable 
                     onPress={handleBack}
-                    className="bg-primary-500 px-4 py-2 rounded"
+                    className="bg-brand-500 px-4 py-2 rounded active:bg-brand-600"
                 >
                     <Text className="text-white font-medium">Volver</Text>
                 </Pressable>
@@ -181,17 +181,17 @@ export default function ChannelScreen() {
     }
 
     return (
-        <View className={`flex-1 bg-white dark:bg-gray-900 ${isDesktop ? 'flex-row' : ''}`}>
+        <View className={`flex-1 bg-background-0 ${isDesktop ? 'flex-row' : ''}`}>
             {/* Header - Only show on mobile */}
             {!isDesktop && (
-                <View className="flex-row items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                <View className="flex-row items-center p-4 border-b border-outline-200 bg-background-0">
                     <Pressable
                         onPress={handleBack}
-                        className="mr-3 p-2 rounded-full active:bg-gray-100 dark:active:bg-gray-800"
+                        className="mr-3 p-2 rounded-full active:bg-background-100"
                     >
-                        <ArrowLeft size={24} color="#6b7280" />
+                        <ArrowLeft size={24} color="rgb(var(--color-typography-600))" />
                     </Pressable>
-                    <Text className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <Text className="text-lg font-semibold text-typography-900">
                         Información del Canal
                     </Text>
                 </View>
@@ -199,7 +199,7 @@ export default function ChannelScreen() {
 
             {/* Channel Info + Thread List - Desktop: 1/5 del espacio restante (20%), Mobile: 100% */}
             <View 
-                className="bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700"
+                className="bg-background-0 border-r border-outline-200"
                 style={isDesktop ? { width: '30%' } : { flex: 1 }}
             >
                 <ChannelInfo 
@@ -228,8 +228,8 @@ export default function ChannelScreen() {
                             showBackButton={false}
                         />
                     ) : (
-                        <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-gray-900">
-                            <Text className="text-gray-500 dark:text-gray-400 text-center px-8">
+                        <View className="flex-1 items-center justify-center bg-background-50">
+                            <Text className="text-typography-500 text-center px-8">
                                 Selecciona un thread para comenzar la conversación
                             </Text>
                         </View>

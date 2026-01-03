@@ -331,10 +331,10 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                         </View>
                     )}
                     <View>
-                        <Text className="font-bold text-gray-900 dark:text-white text-base">
+                        <Text className="font-bold text-typography-900 text-base">
                             {thread.name || 'Unknown Thread'}
                         </Text>
-                        <Text className="text-xs text-gray-500 dark:text-gray-400">
+                        <Text className="text-xs text-typography-500">
                             {channel.name}
                         </Text>
                     </View>
@@ -348,21 +348,21 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
             {isLoading ? (
                 <View className="flex-1 items-center justify-center">
                     <ActivityIndicator size="large" color="rgb(var(--color-brand-500))" />
-                    <Text className="text-gray-500 dark:text-gray-400 mt-2">Loading messages...</Text>
+                    <Text className="text-typography-500 mt-2">Loading messages...</Text>
                 </View>
             ) : error ? (
                 <View className="flex-1 items-center justify-center px-4">
-                    <Text className="text-red-500 dark:text-red-400 text-center mb-4">{error}</Text>
+                    <Text className="text-error-500 text-center mb-4">{error}</Text>
                     <Pressable
                         onPress={fetchMessages}
-                        className="bg-brand-500 px-4 py-2 rounded-lg"
+                        className="bg-brand-500 px-4 py-2 rounded-lg active:bg-brand-600"
                     >
                         <Text className="text-white">Retry</Text>
                     </Pressable>
                 </View>
             ) : messages.length === 0 ? (
                 <View className="flex-1 items-center justify-center px-4">
-                    <Text className="text-gray-500 dark:text-gray-400 text-center">
+                    <Text className="text-typography-500 text-center">
                         No messages yet. Start the conversation!
                     </Text>
                 </View>
@@ -410,16 +410,16 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                                 <View className="flex-1">
                                     {showHeader && (
                                         <View className="flex-row items-baseline mb-1">
-                                            <Text className="font-bold text-gray-900 dark:text-white mr-2 text-base">
+                                            <Text className="font-bold text-typography-900 mr-2 text-base">
                                                 {item.sender?.profile?.displayName || item.sender?.name || 'Unknown User'}
                                             </Text>
-                                            <Text className="text-xs text-gray-500 dark:text-gray-400">
+                                            <Text className="text-xs text-typography-500">
                                                 {messageTime.toLocaleDateString()} {messageTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </Text>
                                         </View>
                                     )}
 
-                                    <Text className="text-gray-800 dark:text-gray-100 text-base leading-6">
+                                    <Text className="text-typography-800 text-base leading-6">
                                         {item.content}
                                     </Text>
                                     
@@ -429,7 +429,7 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                                     )}
                                     
                                     {isPending && (
-                                        <Text className="text-[10px] text-gray-400 mt-1">Sending...</Text>
+                                        <Text className="text-[10px] text-typography-400 mt-1">Sending...</Text>
                                     )}
                                 </View>
                             </View>

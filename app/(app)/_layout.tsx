@@ -14,7 +14,7 @@ function AppLayoutContent() {
     };
 
     return (
-        <View className="flex-1 flex-row bg-gray-50 dark:bg-gray-900">
+        <View className="flex-1 flex-row bg-background-0">
             {/* Sidebar - 1/6 del viewport */}
             <View>
                 <Sidebar

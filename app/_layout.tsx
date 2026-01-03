@@ -41,8 +41,8 @@ function RootLayoutNav() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(var(--color-background-0))' }}>
+        <ActivityIndicator size="large" color="rgb(var(--color-brand-500))" />
       </View>
     );
   }
@@ -55,8 +55,8 @@ function ThemedApp() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
-        <ActivityIndicator size="large" color="#00a884" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(var(--color-background-0))' }}>
+        <ActivityIndicator size="large" color="rgb(var(--color-brand-500))" />
       </View>
     );
   }

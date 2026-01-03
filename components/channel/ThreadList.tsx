@@ -23,8 +23,8 @@ export function ThreadList({
     if (isLoading) {
         return (
             <View className="flex-1 items-center justify-center">
-                <ActivityIndicator size="large" color="rgb(var(--color-accent-500))" />
-                <Text className="text-gray-600 dark:text-gray-400 mt-2">
+                <ActivityIndicator size="large" color="rgb(var(--color-brand-500))" />
+                <Text className="text-typography-600 mt-2">
                     Cargando hilos...
                 </Text>
             </View>
@@ -33,8 +33,8 @@ export function ThreadList({
 
     return (
         <View className="flex-1">
-            <View className="flex-row items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                <Text className="text-lg font-semibold text-gray-900 dark:text-white">
+            <View className="flex-row items-center justify-between p-4 border-b border-outline-200">
+                <Text className="text-lg font-semibold text-typography-900">
                     Hilos del canal
                 </Text>
                 {isAdmin && (
@@ -51,7 +51,7 @@ export function ThreadList({
 
             {threads.length === 0 ? (
                 <View className="flex-1 items-center justify-center p-8">
-                    <Text className="text-gray-500 dark:text-gray-400 text-center mb-4">
+                    <Text className="text-typography-600 text-center mb-4">
                         No hay hilos disponibles
                     </Text>
                     {isAdmin && (

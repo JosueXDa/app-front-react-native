@@ -12,7 +12,7 @@ export const GithubLoginButton = () => {
             // la conversión de la URL de callback a deep link
             const { data, error } = await authClient.signIn.social({
                 provider: "github",
-                callbackURL: "http://localhost:8081/login", // Se convertirá automáticamente a appfrontnativemessages://
+                callbackURL: "http://localhost:8081/(app)", // Se convertirá automáticamente a appfrontnativemessages://
             });
 
             if (error) {
@@ -31,7 +31,7 @@ export const GithubLoginButton = () => {
         <Pressable
             onPress={handleGithubLogin}
             disabled={loading}
-            className={`bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex-1 items-center ${loading ? 'opacity-70' : 'active:bg-gray-100 dark:active:bg-gray-700'}`}
+            className={`bg-background-50 border border-outline-200 p-4 rounded-xl flex-1 items-center ${loading ? 'opacity-70' : 'active:bg-background-100'}`}
         >
             <Ionicons name="logo-github" size={24} color="#ffff" />
         </Pressable>

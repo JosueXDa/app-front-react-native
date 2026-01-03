@@ -59,7 +59,7 @@ export default function LoginScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white dark:bg-gray-950">
+        <SafeAreaView className="flex-1 bg-background-0">
             <View className="flex-grow justify-center px-6 py-10">
                 <View className="items-center mb-10">
                     <View className="bg-brand-100 dark:bg-brand-900 p-4 rounded-full mb-4">

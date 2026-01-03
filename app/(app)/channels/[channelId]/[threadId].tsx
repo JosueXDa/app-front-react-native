@@ -54,16 +54,17 @@ export default function ThreadScreen() {
 
     if (isLoading) {
         return (
-            <View className="flex-1 items-center justify-center bg-[#efeae2] dark:bg-[#0b141a]">
-                <ActivityIndicator size="large" color="#00a884" />
+            <View className="flex-1 items-center justify-center bg-background-0">
+                <ActivityIndicator size="large" color="rgb(var(--color-brand-500))" />
+                <Text className="text-typography-600 mt-2">Loading thread...</Text>
             </View>
         );
     }
 
     if (error || !channel || !thread) {
         return (
-            <View className="flex-1 items-center justify-center bg-[#efeae2] dark:bg-[#0b141a]">
-                <Text className="text-red-500 text-center mb-4">
+            <View className="flex-1 items-center justify-center bg-background-0">
+                <Text className="text-error-500 text-center mb-4">
                     {error || 'Failed to load thread'}
                 </Text>
             </View>

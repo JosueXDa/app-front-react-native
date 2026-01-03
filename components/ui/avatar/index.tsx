@@ -68,7 +68,7 @@ const avatarBadgeStyle = tva({
 });
 
 const avatarImageStyle = tva({
-  base: 'h-full w-full rounded-full absolute',
+  base: 'h-full w-full rounded-full absolute z-10',
 });
 
 type IAvatarProps = Omit<

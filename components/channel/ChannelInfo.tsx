@@ -18,7 +18,7 @@ export function ChannelInfo({ channel, memberCount, onChannelUpdate, isAdmin }: 
 
     return (
         <>
-            <View className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <View className="p-4 border-b border-outline-200 bg-background-0">
                 <View className="flex-row items-center mb-3">
                     {channel.imageUrl ? (
                         <View className="mr-3">
@@ -27,22 +27,22 @@ export function ChannelInfo({ channel, memberCount, onChannelUpdate, isAdmin }: 
                             </Avatar>
                         </View>
                     ) : (
-                        <View className="w-16 h-16 rounded-full bg-primary-100 dark:bg-primary-900 items-center justify-center mr-3">
+                        <View className="w-16 h-16 rounded-full bg-brand-100 dark:bg-brand-900 items-center justify-center mr-3">
                             {channel.isPrivate ? (
-                                <Lock size={24} color="rgb(var(--color-accent-500))" />
+                                <Lock size={24} color="rgb(var(--color-brand-500))" />
                             ) : (
-                                <Hash size={24} color="rgb(var(--color-accent-500))" />
+                                <Hash size={24} color="rgb(var(--color-brand-500))" />
                             )}
                         </View>
                     )}
                     <View className="flex-1">
-                        <Text className="text-xl font-bold text-gray-900 dark:text-white">
+                        <Text className="text-xl font-bold text-typography-900">
                             {channel.name}
                         </Text>
                         {memberCount !== undefined && (
                             <View className="flex-row items-center mt-1">
                                 <User size={14} color="rgb(var(--color-typography-600))" />
-                                <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1">
+                                <Text className="text-sm text-typography-600 ml-1">
                                     {memberCount} {memberCount === 1 ? 'miembro' : 'miembros'}
                                 </Text>
                             </View>
@@ -58,7 +58,7 @@ export function ChannelInfo({ channel, memberCount, onChannelUpdate, isAdmin }: 
                 </View>
                 
                 {channel.description && (
-                    <Text className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                    <Text className="text-sm text-typography-600 mb-2">
                         {channel.description}
                     </Text>
                 )}
@@ -66,8 +66,8 @@ export function ChannelInfo({ channel, memberCount, onChannelUpdate, isAdmin }: 
                 {channel.category && (
                     <View className="flex-row items-center">
                             {listCategories.map((category, index) => (
-                                <View key={index} className="bg-primary-100 dark:bg-primary-900 px-2 py-1 mr-2 rounded">
-                                    <Text className="text-xs font-medium text-primary-700 dark:text-primary-300">
+                                <View key={index} className="bg-brand-100 dark:bg-brand-900 px-2 py-1 mr-2 rounded">
+                                    <Text className="text-xs font-medium text-brand-600 dark:text-brand-300">
                                         {category}
                                     </Text>
                                 </View>

@@ -24,7 +24,7 @@ export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
 
     if (isLoading) {
         return (
-            <View className="w-20 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 items-center py-4">
+            <View className="w-20 bg-background-0 border-l border-outline-200 items-center py-4">
                 <ActivityIndicator size="small" color="rgb(var(--color-brand-500))" />
             </View>
         );
@@ -89,7 +89,7 @@ export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
                                     )}
                                 </Avatar>
                                 {selectedChannelId === item.id && (
-                                    <View className="absolute -right-1 top-0 w-3 h-3 rounded-full bg-brand-500 border-2 border-white dark:border-gray-900" />
+                                    <View className="absolute -right-1 top-0 w-3 h-3 rounded-full bg-brand-500 border-2 border-background-0" />
                                 )}
                             </Pressable>
                         ))}
