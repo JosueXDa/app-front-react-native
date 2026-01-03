@@ -1,5 +1,5 @@
 import { Channel } from '@/lib/api/chat';
-import { Info, Settings, Trash2, Users } from 'lucide-react-native';
+import { Settings } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 import * as DropdownMenu from 'zeego/dropdown-menu';
@@ -38,28 +38,21 @@ export function ChannelSettingsMenu({
             <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
                     {children || (
-                        <Pressable className="w-10 h-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 active:bg-gray-200 dark:active:bg-gray-700">
-                            <Settings size={20} color="#6b7280" />
+                        <Pressable className="w-10 h-10 items-center justify-center rounded-full bg-background-50 active:bg-background-100">
+                            <Settings size={20} color="rgb(var(--color-typography-600))" />
                         </Pressable>
                     )}
                 </DropdownMenu.Trigger>
 
                 <DropdownMenu.Content
-                    className=" bg-white dark:bg-gray-800 rounded-lg p-2 shadow-lg"
+                    className="bg-background-0 rounded-lg p-2 shadow-lg border border-outline-200"
                 >
                     <DropdownMenu.Item
                         key="basic-info"
                         onSelect={() => handleSelect('basic-info')}
+                        className="py-2 px-3 rounded-md hover:bg-background-100"
                     >
-                        <DropdownMenu.ItemIcon 
-                            ios={{ 
-                                name: 'info.circle',
-                                pointSize: 16,
-                            }}
-                        >
-                            <Info size={16} color="#6b7280" />
-                        </DropdownMenu.ItemIcon>
-                        <DropdownMenu.ItemTitle>
+                        <DropdownMenu.ItemTitle className="text-sm text-typography-900">
                             Información del Canal
                         </DropdownMenu.ItemTitle>
                     </DropdownMenu.Item>
@@ -67,16 +60,9 @@ export function ChannelSettingsMenu({
                     <DropdownMenu.Item
                         key="members"
                         onSelect={() => handleSelect('members')}
+                        className="py-2 px-3 rounded-md hover:bg-background-100"
                     >
-                        <DropdownMenu.ItemIcon 
-                            ios={{ 
-                                name: 'person.2',
-                                pointSize: 16,
-                            }}
-                        >
-                            <Users size={16} color="#6b7280" />
-                        </DropdownMenu.ItemIcon>
-                        <DropdownMenu.ItemTitle>
+                        <DropdownMenu.ItemTitle className="text-sm text-typography-900">
                             Gestión de Miembros
                         </DropdownMenu.ItemTitle>
                     </DropdownMenu.Item>
@@ -84,23 +70,14 @@ export function ChannelSettingsMenu({
                     <DropdownMenu.Item
                         key="threads"
                         onSelect={() => handleSelect('threads')}
+                        className="py-2 px-3 rounded-md hover:bg-background-100"
                     >
-                        <DropdownMenu.ItemIcon 
-                            ios={{ 
-                                name: 'bubble.left.and.bubble.right',
-                                pointSize: 16,
-                            }}
-                        >
-                            <Settings size={16} color="#6b7280" />
-                        </DropdownMenu.ItemIcon>
-                        <DropdownMenu.ItemTitle>
+                        <DropdownMenu.ItemTitle className="text-sm text-typography-900">
                             Gestión de Hilos
                         </DropdownMenu.ItemTitle>
                     </DropdownMenu.Item>
 
-                    <DropdownMenu.Separator 
-                        className="h-px bg-gray-200 dark:bg-gray-700 my-1"
-                    />
+                    <DropdownMenu.Separator className="h-px bg-outline-200 my-1" />
 
                     <DropdownMenu.Item
                         key="delete"
@@ -109,19 +86,9 @@ export function ChannelSettingsMenu({
                             // TODO: Implementar confirmación de eliminación
                             console.log('Delete channel:', channel.id);
                         }}
+                        className="py-2 px-3 rounded-md hover:bg-error-50"
                     >
-                        <DropdownMenu.ItemIcon 
-                            ios={{ 
-                                name: 'trash',
-                                pointSize: 16,
-                                hierarchicalColor: 'red',
-                            }}
-                        >
-                            <Trash2 size={16} color="#ef4444" />
-                        </DropdownMenu.ItemIcon>
-                        <DropdownMenu.ItemTitle 
-                            className="text-red-500"
-                        >
+                        <DropdownMenu.ItemTitle className="text-sm text-error-500">
                             Eliminar Canal
                         </DropdownMenu.ItemTitle>
                     </DropdownMenu.Item>
