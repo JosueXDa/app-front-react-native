@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/context/AuthContext';
-import { Channel, createMessage, getMessages, Message, MessageAttachment } from '@/lib/api/chat';
+import { Channel, createMessage, getMessagesByThread, Message, MessageAttachment } from '@/lib/api/chat';
 import { wsManager } from '@/lib/api/ws';
 import { ArrowLeft, MoreVertical } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -38,22 +38,32 @@ interface ChatViewProps {
 export function ChatView({ channel, thread, showBackButton = true, onBack }: ChatViewProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const [error, setError] = useState<string | null>(null);
     
-    
-
     const pendingQueueRef = useRef<PendingMessage[]>([]);
     const isSendingRef = useRef(false);
     const flatListRef = useRef<FlatList>(null);
+    const offsetRef = useRef(0);
+    const limitRef = useRef(50);
     
     const { user } = useAuth();
 
-    const fetchMessages = useCallback(async () => {
+    const fetchMessages = useCallback(async (reset: boolean = true) => {
         if (!thread.id) return;
         try {
-            setIsLoading(true);
+            if (reset) {
+                setIsLoading(true);
+                offsetRef.current = 0;
+            }
             setError(null);
-            const fetchedMessages = await getMessages(thread.id);
+            
+            const fetchedMessages = await getMessagesByThread(
+                thread.id,
+                limitRef.current,
+                reset ? 0 : offsetRef.current
+            );
             
             // Normalize messages to ensure profile structure exists
             const normalizedMessages = fetchedMessages.map(msg => ({
@@ -71,7 +81,15 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                 }
             }));
 
-            setMessages(normalizedMessages);
+            if (reset) {
+                setMessages(normalizedMessages);
+                offsetRef.current = normalizedMessages.length;
+            } else {
+                setMessages(prev => [...normalizedMessages, ...prev]);
+                offsetRef.current += normalizedMessages.length;
+            }
+            
+            setHasMore(fetchedMessages.length === limitRef.current);
         } catch (err) {
             console.error('Failed to fetch messages:', err);
             setError('Failed to load messages. Please try again.');
@@ -79,6 +97,19 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
             setIsLoading(false);
         }
     }, [thread.id]);
+
+    const loadMoreMessages = useCallback(async () => {
+        if (isLoadingMore || !hasMore || isLoading) return;
+        
+        try {
+            setIsLoadingMore(true);
+            await fetchMessages(false);
+        } catch (err) {
+            console.error('Failed to load more messages:', err);
+        } finally {
+            setIsLoadingMore(false);
+        }
+    }, [fetchMessages, isLoadingMore, hasMore, isLoading]);
 
     const processPendingQueue = useCallback(async () => {
         if (isSendingRef.current || pendingQueueRef.current.length === 0 || !user || !thread.id) {
@@ -242,11 +273,6 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
             console.log('[ChatView] ➕ Adding new message');
             const updated = [...prev, newMessage];
             
-            // Auto-scroll to bottom for new messages
-            setTimeout(() => {
-                flatListRef.current?.scrollToEnd({ animated: true });
-            }, 100);
-            
             return updated;
         });
     }, []);
@@ -259,6 +285,11 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
 
     useEffect(() => {
         if (!thread.id) return;
+
+        // Reset pagination state when thread changes
+        offsetRef.current = 0;
+        setHasMore(true);
+        setIsLoadingMore(false);
 
         const setupWebSocket = async () => {
             try {
@@ -354,7 +385,7 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
                 <View className="flex-1 items-center justify-center px-4">
                     <Text className="text-error-500 text-center mb-4">{error}</Text>
                     <Pressable
-                        onPress={fetchMessages}
+                        onPress={() => fetchMessages(true)}
                         className="bg-brand-500 px-4 py-2 rounded-lg active:bg-brand-600"
                     >
                         <Text className="text-white">Retry</Text>
@@ -369,21 +400,37 @@ export function ChatView({ channel, thread, showBackButton = true, onBack }: Cha
             ) : (
                 <FlatList
                     ref={flatListRef}
-                    data={messages}
+                    data={[...messages].reverse()}
                     keyExtractor={(item) => item.id}
                     extraData={messages}
                     contentContainerStyle={{ paddingVertical: 16 }}
-                    onContentSizeChange={() => {
-                        flatListRef.current?.scrollToEnd({ animated: false });
+                    inverted={true}
+                    onEndReachedThreshold={0.5}
+                    onEndReached={() => {
+                        loadMoreMessages();
                     }}
+                    ListFooterComponent={
+                        isLoadingMore ? (
+                            <View className="py-4 items-center">
+                                <ActivityIndicator size="small" color="rgb(var(--color-brand-500))" />
+                                <Text className="text-typography-500 text-xs mt-2">Loading more messages...</Text>
+                            </View>
+                        ) : !hasMore ? (
+                            <View className="py-4 items-center">
+                                <Text className="text-typography-500 text-xs">No more messages</Text>
+                            </View>
+                        ) : null
+                    }
                     renderItem={({ item, index }) => {
                         const messageTime = new Date(item.createdAt);
                         const isPending = item.id.startsWith('temp-');
                         
-                        const prevMessage = messages[index - 1];
-                        const isSameUser = prevMessage && prevMessage.senderId === item.senderId;
-                        const timeDiff = prevMessage ? messageTime.getTime() - new Date(prevMessage.createdAt).getTime() : 0;
-                        const isNear = timeDiff < 5 * 60 * 1000; // 5 minutes
+                        // Since we're using inverted, we need to look at the next message (index + 1) for comparison
+                        const reversedMessages = [...messages].reverse();
+                        const nextMessage = reversedMessages[index + 1];
+                        const isSameUser = nextMessage && nextMessage.senderId === item.senderId;
+                        const timeDiff = nextMessage ? messageTime.getTime() - new Date(nextMessage.createdAt).getTime() : 0;
+                        const isNear = Math.abs(timeDiff) < 5 * 60 * 1000; // 5 minutes
                         
                         const showHeader = !isSameUser || !isNear;
 
