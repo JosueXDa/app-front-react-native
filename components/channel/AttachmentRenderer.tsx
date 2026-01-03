@@ -2,6 +2,8 @@ import { MessageAttachment } from '@/lib/api/chat';
 import { Download } from 'lucide-react-native';
 import React from 'react';
 import { Image, Linking, Pressable, Text, View } from 'react-native';
+import { AudioAttachment } from './AudioAttachment';
+import { VideoAttachment } from './VideoAttachment';
 
 interface AttachmentRendererProps {
     attachment: MessageAttachment;
@@ -55,44 +57,20 @@ export function AttachmentRenderer({ attachment }: AttachmentRendererProps) {
 
         case 'video':
             return (
-                <Pressable
-                    onPress={handlePress}
-                    className="my-2 bg-background-50 rounded-lg p-4 flex-row items-center max-w-[300px]"
-                >
-                    <View className="bg-accent-500 rounded-full p-3 mr-3">
-                        <Text className="text-2xl">🎥</Text>
-                    </View>
-                    <View className="flex-1">
-                        <Text className="text-sm font-semibold text-typography-900" numberOfLines={1}>
-                            {attachment.filename}
-                        </Text>
-                        <Text className="text-xs text-typography-500">
-                            Video • {formatFileSize(attachment.size)}
-                        </Text>
-                    </View>
-                    <Download size={20} color="rgb(var(--color-typography-400))" />
-                </Pressable>
+                <VideoAttachment
+                    url={attachment.url}
+                    filename={attachment.filename}
+                    size={attachment.size}
+                />
             );
 
         case 'audio':
             return (
-                <Pressable
-                    onPress={handlePress}
-                    className="my-2 bg-gray-100 dark:bg-[#2b2d31] rounded-lg p-4 flex-row items-center max-w-[300px]"
-                >
-                    <View className="bg-green-500 rounded-full p-3 mr-3">
-                        <Text className="text-2xl">🎵</Text>
-                    </View>
-                    <View className="flex-1">
-                        <Text className="text-sm font-semibold text-gray-900 dark:text-white" numberOfLines={1}>
-                            {attachment.filename}
-                        </Text>
-                        <Text className="text-xs text-gray-500 dark:text-gray-400">
-                            Audio • {formatFileSize(attachment.size)}
-                        </Text>
-                    </View>
-                    <Download size={20} color="#9ca3af" />
-                </Pressable>
+                <AudioAttachment
+                    url={attachment.url}
+                    filename={attachment.filename}
+                    size={attachment.size}
+                />
             );
 
         case 'document':

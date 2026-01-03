@@ -190,6 +190,16 @@ export const uploadMessageImage = (fileUri: string, filename: string, contentTyp
 export const uploadMessageAttachment = (fileUri: string, filename: string, contentType: string) =>
     uploadFile('/message/attachment', fileUri, filename, contentType);
 
+export const uploadMessageVideo = (fileUri: string, filename: string, contentType: string) =>
+    uploadFile('/message/video', fileUri, filename, contentType);
+
+/**
+ * Sube un audio de mensaje
+ * Límite: 25MB, tipos: mp3, wav, ogg, m4a, etc.
+ */
+export const uploadMessageAudio = (fileUri: string, filename: string, contentType: string) =>
+    uploadFile('/message/audio', fileUri, filename, contentType);
+
 /**
  * Sube múltiples imágenes de mensaje
  * Límite: Hasta 10 imágenes de 10MB cada una
@@ -203,6 +213,16 @@ export const uploadMessageImages = (files: { uri: string; name: string; type: st
  */
 export const uploadMessageAttachments = (files: { uri: string; name: string; type: string }[]) =>
     uploadMultipleFiles('/message/attachments', files);
+
+export const uploadMessageVideos = (files: { uri: string; name: string; type: string }[]) =>
+    uploadMultipleFiles('/message/videos', files);
+
+/**
+ * Sube múltiples audios de mensaje
+ * Límite: Hasta 5 audios de 25MB cada uno
+ */
+export const uploadMessageAudios = (files: { uri: string; name: string; type: string }[]) =>
+    uploadMultipleFiles('/message/audios', files);
 
 // ============ Utilidades ============
 

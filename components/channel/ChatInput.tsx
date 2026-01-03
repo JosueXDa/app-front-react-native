@@ -1,5 +1,5 @@
 import { getAttachmentType, MessageAttachment } from '@/lib/api/chat';
-import { uploadMessageAttachment, uploadMessageImage } from '@/lib/api/upload';
+import { uploadMessageAttachment, uploadMessageAudio, uploadMessageImage, uploadMessageVideo } from '@/lib/api/upload';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
@@ -107,11 +107,20 @@ export const ChatInput = ({ onSend }: ChatInputProps) => {
 
                 for (const file of attachments) {
                     const isImage = file.type.startsWith('image/');
+                    const isVideo = file.type.startsWith('video/');
+                    const isAudio = file.type.startsWith('audio/');
                     
-                    // Subir archivo al backend
-                    const result = isImage 
-                        ? await uploadMessageImage(file.uri, file.name, file.type)
-                        : await uploadMessageAttachment(file.uri, file.name, file.type);
+                    // Subir archivo al backend usando el endpoint correcto según el tipo
+                    let result;
+                    if (isImage) {
+                        result = await uploadMessageImage(file.uri, file.name, file.type);
+                    } else if (isVideo) {
+                        result = await uploadMessageVideo(file.uri, file.name, file.type);
+                    } else if (isAudio) {
+                        result = await uploadMessageAudio(file.uri, file.name, file.type);
+                    } else {
+                        result = await uploadMessageAttachment(file.uri, file.name, file.type);
+                    }
 
                     // Crear el objeto MessageAttachment según la estructura del backend
                     uploadedAttachments.push({
