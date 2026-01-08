@@ -120,7 +120,7 @@ export default function LoginScreen() {
 
                     <View className="flex-row justify-center">
                         <Text className="text-typography-600">¿No tienes una cuenta? </Text>
-                        <Link href="/(auth)/register" asChild>
+                        <Link href="./(auth)/register" asChild>
                             <Pressable>
                                 <Text className="text-brand-500 font-bold">Regístrate</Text>
                             </Pressable>

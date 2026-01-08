@@ -139,7 +139,7 @@ export default function RegisterScreen() {
 
                     <View className="flex-row justify-center mt-8">
                         <Text className="text-typography-600">¿Ya tienes una cuenta? </Text>
-                        <Link href="/(auth)/login" asChild>
+                        <Link href="./(auth)/login" asChild>
                             <Pressable>
                                 <Text className="text-brand-500 font-bold">Inicia Sesión</Text>
                             </Pressable>
