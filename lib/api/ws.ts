@@ -1,10 +1,11 @@
 import { Platform } from "react-native";
 import { storage } from "../storage";
+import { MessageHandler } from "./interface/ws";
+
+export * from "./interface/ws";
 
 const BASE_URL = process.env.EXPO_PUBLIC_BACK_URL || "http://localhost:3000";
 const WS_URL = BASE_URL.replace(/^http/, "ws") + "/ws";
-
-type MessageHandler = (data: any) => void;
 
 export class WebSocketManager {
     private static instance: WebSocketManager;
