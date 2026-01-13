@@ -1,11 +1,6 @@
 import { Channel, getUserChannels } from '@/lib/api/chat';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
-
-interface ChannelContextType {
-    joinedChannels: Channel[];
-    refreshChannels: () => Promise<void>;
-    isLoading: boolean;
-}
+import { ChannelContextType } from './interface/ChannelContext';
 
 const ChannelContext = createContext<ChannelContextType>({} as ChannelContextType);
 

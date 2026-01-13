@@ -1,10 +1,6 @@
 import { Channel } from "@/lib/api/chat";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
-
-interface SelectedChannelContextType {
-    selectedChannel: Channel | null;
-    setSelectedChannel: (channel: Channel | null) => void;
-}
+import { SelectedChannelContextType } from './interface/SelectedChannel';
 
 const SelectedChannelContext = createContext<SelectedChannelContextType>({} as SelectedChannelContextType);
 

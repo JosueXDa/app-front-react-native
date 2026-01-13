@@ -2,15 +2,8 @@ import { authApi, LoginRequest, RegisterRequest, User } from '@/lib/api';
 import { storage } from '@/lib/storage';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
+import { AuthContextType } from './interface/AuthContext';
 
-interface AuthContextType {
-    user: User | null;
-    isLoading: boolean;
-    signIn: (data: LoginRequest) => Promise<void>;
-    signUp: (data: RegisterRequest) => Promise<void>;
-    signOut: (data?: any) => Promise<void>;
-    updateUser: (updatedUser: User) => void;
-}
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 

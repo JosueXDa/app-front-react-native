@@ -1,55 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme as useDeviceColorScheme } from 'react-native';
-
-type ThemeMode = 'light' | 'dark' | 'system';
-type ResolvedTheme = 'light' | 'dark';
-
-interface ThemeContextType {
-  /**
-   * Current theme mode setting ('light', 'dark', or 'system')
-   */
-  themeMode: ThemeMode;
-  
-  /**
-   * Resolved theme ('light' or 'dark') after considering system preference if mode is 'system'
-   */
-  resolvedTheme: ResolvedTheme;
-  
-  /**
-   * Set the theme mode
-   */
-  setThemeMode: (mode: ThemeMode) => Promise<void>;
-  
-  /**
-   * Toggle between light and dark themes
-   */
-  toggleTheme: () => Promise<void>;
-  
-  /**
-   * Whether the theme is currently loading from storage
-   */
-  isLoading: boolean;
-}
+import { ResolvedTheme, ThemeContextType, ThemeMode, ThemeProviderProps } from './interface/ThemeContext';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_STORAGE_KEY = '@app:theme';
 
-interface ThemeProviderProps {
-  children: ReactNode;
-}
-
-/**
- * Provider component that manages theme state and persistence
- * 
- * @example
- * ```tsx
- * <ThemeProvider>
- *   <App />
- * </ThemeProvider>
- * ```
- */
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const deviceColorScheme = useDeviceColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
@@ -115,24 +72,6 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   );
 }
 
-/**
- * Hook to access theme context
- * 
- * @throws Error if used outside of ThemeProvider
- * 
- * @example
- * ```tsx
- * function MyComponent() {
- *   const { resolvedTheme, toggleTheme } = useTheme();
- *   
- *   return (
- *     <Button onPress={toggleTheme}>
- *       Current theme: {resolvedTheme}
- *     </Button>
- *   );
- * }
- * ```
- */
 export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
   if (context === undefined) {
