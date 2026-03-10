@@ -57,6 +57,15 @@ export interface PaginatedChannelsResponse {
         totalPages: number;
     };
 }
+export interface GetChannelsResponse {
+    data: Channel[]; // <-- Cámbialo a esto
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }
+}
 
 // Thread Interfaces
 export interface Thread {

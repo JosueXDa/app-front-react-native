@@ -6,9 +6,9 @@ import {
     CreateChannelDto,
     CreateMessageDto,
     CreateThreadDto,
+    GetChannelsResponse,
     Message,
     MessageAttachment,
-    PaginatedChannelsResponse,
     Thread,
     UpdateChannelDto,
     UpdateThreadDto
@@ -32,50 +32,50 @@ export function getAttachmentType(mimeType: string): AttachmentType {
 // Channel Endpoints
 
 
-export const getChannels = async (page: number = 1, limit: number = 10): Promise<PaginatedChannelsResponse> => {
-    const response = await axiosInstance.get<PaginatedChannelsResponse>(`/api/chats/channels?page=${page}&limit=${limit}`);
+export const getChannels = async (page: number = 1, limit: number = 10): Promise<GetChannelsResponse> => {
+    const response = await axiosInstance.get<GetChannelsResponse>(`/api/channels?page=${page}&limit=${limit}`);
     return response.data;
 };
 
 export const getUserChannels = async (): Promise<Channel[]> => {
-    const response = await axiosInstance.get<Channel[]>("/api/chats/members/joined");
+    const response = await axiosInstance.get<Channel[]>("/api/members/joined");
     return response.data;
 };
 
 export const getChannelById = async (id: string): Promise<Channel> => {
-    const response = await axiosInstance.get<{ channel: Channel }>(`/api/chats/channels/${id}`);
+    const response = await axiosInstance.get<{ channel: Channel }>(`/api/channels/${id}`);
     return response.data.channel;
 };
 
 export const createChannel = async (data: CreateChannelDto): Promise<Channel> => {
-    const response = await axiosInstance.post<{ channel: Channel }>("/api/chats/channels", data);
+    const response = await axiosInstance.post<{ channel: Channel }>("/api/channels", data);
     return response.data.channel;
 };
 
 export const updateChannel = async (id: string, data: UpdateChannelDto): Promise<Channel> => {
-    const response = await axiosInstance.patch<{ channel: Channel }>(`/api/chats/channels/${id}`, data);
+    const response = await axiosInstance.patch<{ channel: Channel }>(`/api/channels/${id}`, data);
     return response.data.channel;
 };
 
 export const deleteChannel = async (id: string): Promise<{ message: string }> => {
-    const response = await axiosInstance.delete<{ message: string }>(`/api/chats/channels/${id}`);
+    const response = await axiosInstance.delete<{ message: string }>(`/api/channels/${id}`);
     return response.data;
 };
 
 // Member Endpoints
 
 export const getChannelMembers = async (channelId: string): Promise<ChannelMember[]> => {
-    const response = await axiosInstance.get<ChannelMember[]>(`/api/chats/members/${channelId}`);
+    const response = await axiosInstance.get<ChannelMember[]>(`/api/members/${channelId}`);
     return response.data;
 };
 
 export const getMemberRole = async (channelId: string, userId: string): Promise<string> => {
-    const response = await axiosInstance.get<{ role: string }>(`/api/chats/members/${channelId}/role/${userId}`);
+    const response = await axiosInstance.get<{ role: string }>(`/api/members/${channelId}/role/${userId}`);
     return response.data.role;
 };
 
 export const joinChannel = async (channelId: string, userId?: string, role: string = 'member'): Promise<ChannelMember> => {
-    const response = await axiosInstance.post<ChannelMember>("/api/chats/members", { 
+    const response = await axiosInstance.post<ChannelMember>("/api/members", { 
         channelId, 
         userId,
         role 
@@ -84,70 +84,70 @@ export const joinChannel = async (channelId: string, userId?: string, role: stri
 };
 
 export const updateMemberRole = async (channelId: string, userId: string, role: string): Promise<void> => {
-    await axiosInstance.patch(`/api/chats/members/${channelId}/${userId}/role`, { role });
+    await axiosInstance.patch(`/api/members/${channelId}/${userId}/role`, { role });
 };
 
 export const removeMember = async (channelId: string, userId: string): Promise<{ message: string }> => {
-    const response = await axiosInstance.delete<{ message: string }>(`/api/chats/members/${channelId}/${userId}`);
+    const response = await axiosInstance.delete<{ message: string }>(`/api/members/${channelId}/${userId}`);
     return response.data;
 };
 
 export const leaveChannel = async (channelId: string): Promise<{ message: string }> => {
-    const response = await axiosInstance.delete<{ message: string }>(`/api/chats/members/${channelId}`);
+    const response = await axiosInstance.delete<{ message: string }>(`/api/members/${channelId}`);
     return response.data;
 };
 
 export const isJoined = async (channelId: string): Promise<boolean> => {
-    const response = await axiosInstance.get<{ isJoined: boolean }>(`/api/chats/members/is-joined/${channelId}`);
+    const response = await axiosInstance.get<{ isJoined: boolean }>(`/api/members/is-joined/${channelId}`);
     return response.data.isJoined;
 };
 
 
 // Thread API Functions
 export const getThreadsByChannel = async (channelId: string): Promise<Thread[]> => {
-    const response = await axiosInstance.get<Thread[]>(`/api/chats/threads/channel/${channelId}`);
+    const response = await axiosInstance.get<Thread[]>(`/api/threads/channel/${channelId}`);
     return response.data;
 };
 
 export const getActiveThreadsByChannel = async (channelId: string): Promise<Thread[]> => {
-    const response = await axiosInstance.get<Thread[]>(`/api/chats/threads/channel/${channelId}/active`);
+    const response = await axiosInstance.get<Thread[]>(`/api/threads/channel/${channelId}/active`);
     return response.data;
 };
 
 export const getThreadById = async (threadId: string): Promise<Thread> => {
-    const response = await axiosInstance.get<Thread>(`/api/chats/threads/${threadId}`);
+    const response = await axiosInstance.get<Thread>(`/api/threads/${threadId}`);
     return response.data;
 };
 
 export const createThread = async (data: CreateThreadDto): Promise<Thread> => {
-    const response = await axiosInstance.post<Thread>("/api/chats/threads", data);
+    const response = await axiosInstance.post<Thread>("/api/threads", data);
     return response.data;
 };
 
 export const updateThread = async (threadId: string, data: UpdateThreadDto): Promise<Thread> => {
-    const response = await axiosInstance.patch<Thread>(`/api/chats/threads/${threadId}`, data);
+    const response = await axiosInstance.patch<Thread>(`/api/threads/${threadId}`, data);
     return response.data;
 };
 
 export const archiveThread = async (threadId: string): Promise<Thread> => {
-    const response = await axiosInstance.post<Thread>(`/api/chats/threads/${threadId}/archive`);
+    const response = await axiosInstance.post<Thread>(`/api/threads/${threadId}/archive`);
     return response.data;
 };
 
 export const unarchiveThread = async (threadId: string): Promise<Thread> => {
-    const response = await axiosInstance.post<Thread>(`/api/chats/threads/${threadId}/unarchive`);
+    const response = await axiosInstance.post<Thread>(`/api/threads/${threadId}/unarchive`);
     return response.data;
 };
 
 export const deleteThread = async (threadId: string): Promise<{ message: string }> => {
-    const response = await axiosInstance.delete<{ message: string }>(`/api/chats/threads/${threadId}`);
+    const response = await axiosInstance.delete<{ message: string }>(`/api/threads/${threadId}`);
     return response.data;
 };
 
 
 // Message API Functions
 export const getMessagesByThread = async (threadId: string, limit: number = 50, offset: number = 0): Promise<Message[]> => {
-    const response = await axiosInstance.get<Message[]>(`/api/chats/messages/thread/${threadId}?limit=${limit}&offset=${offset}`);
+    const response = await axiosInstance.get<Message[]>(`/api/messages/thread/${threadId}?limit=${limit}&offset=${offset}`);
     return response.data;
 };
 
@@ -172,12 +172,12 @@ export const createMessage = async (data: CreateMessageDto): Promise<Message> =>
         payload.attachments = data.attachments;
     }
     
-    const response = await axiosInstance.post<Message>("/api/chats/messages", payload);
+    const response = await axiosInstance.post<Message>("/api/messages", payload);
     return response.data;
 };
 
 export const deleteMessage = async (messageId: string): Promise<{ message: string }> => {
-    const response = await axiosInstance.delete<{ message: string }>(`/api/chats/messages/${messageId}`);
+    const response = await axiosInstance.delete<{ message: string }>(`/api/messages/${messageId}`);
     return response.data;
 };
 

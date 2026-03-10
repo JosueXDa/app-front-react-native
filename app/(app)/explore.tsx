@@ -31,8 +31,8 @@ export default function Explore() {
         setPage(1);
         try {
             const response = await getChannels(1, LIMIT);
-            // Map the response data structure { channel: ... } to Channel[]
-            const channelList = response.data.map(item => item.channel);
+            // CORRECCIÓN: Asignamos directamente response.data
+            const channelList = response.data; 
             setChannels(channelList);
             setHasMore(response.meta.page < response.meta.totalPages);
         } catch (error) {
@@ -49,7 +49,8 @@ export default function Explore() {
         const nextPage = page + 1;
         try {
             const response = await getChannels(nextPage, LIMIT);
-            const channelList = response.data.map(item => item.channel);
+            // CORRECCIÓN: Asignamos directamente response.data
+            const channelList = response.data;
 
             if (channelList.length > 0) {
                 setChannels(prev => [...prev, ...channelList]);
@@ -59,7 +60,7 @@ export default function Explore() {
                 setHasMore(false);
             }
         } catch (error) {
-            console.error('Error fetching more channels:', error);
+            console.error('Error fetching channels:', error);
         } finally {
             setLoadingMore(false);
         }
@@ -69,7 +70,8 @@ export default function Explore() {
         setRefreshing(true);
         try {
             const response = await getChannels(1, LIMIT);
-            const channelList = response.data.map(item => item.channel);
+            // CORRECCIÓN: Asignamos directamente response.data
+            const channelList = response.data;
             setChannels(channelList);
             setPage(1);
             setHasMore(response.meta.page < response.meta.totalPages);
