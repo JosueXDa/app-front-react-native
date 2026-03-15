@@ -2,8 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 import { LoginForm } from '@/src/features/auth/login/ui/LoginForm';
-import { GoogleLoginButton } from '@/components/auth/GoogleloginBotton';
-import { GithubLoginButton } from '@/components/auth/GithubLoginButton';
+import { GoogleLoginButton } from '@/src/features/auth/social-google';
+import { GithubLoginButton } from '@/src/features/auth/social-github';
 
 export const LoginCard = () => (
   <View className="flex-grow justify-center px-6 py-10">

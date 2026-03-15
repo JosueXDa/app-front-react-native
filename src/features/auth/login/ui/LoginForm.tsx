@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { AuthInput } from '@/components/auth/AuthInput';
+import { AuthInput } from '@/src/shared/ui/auth-input';
 import { useLogin } from '../model/useLogin';
 
 export const LoginForm = () => {

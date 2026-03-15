@@ -5,9 +5,3 @@ export interface User {
   avatarUrl?: string;
   status?: 'online' | 'offline';
 }
-
-export interface Session {
-  token: string;
-  refreshToken?: string;
-  user: User;
-}
