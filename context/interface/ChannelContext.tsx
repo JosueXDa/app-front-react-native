@@ -1,4 +1,4 @@
-import { Channel } from '@/lib/api/chat';
+import { Channel } from '@/src/entities/channel';
 
 export interface ChannelContextType {
 	joinedChannels: Channel[];

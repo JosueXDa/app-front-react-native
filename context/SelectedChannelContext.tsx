@@ -1,4 +1,4 @@
-import { Channel } from "@/lib/api/chat";
+import { Channel } from '@/src/entities/channel';
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import { SelectedChannelContextType } from './interface/SelectedChannel';
 
