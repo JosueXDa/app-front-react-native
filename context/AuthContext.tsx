@@ -1,4 +1,6 @@
-import { authApi, LoginRequest, RegisterRequest, User } from '@/lib/api';
+import { login, logout, me, register } from '@/src/entities/auth/api/auth.api';
+import { LoginRequest, RegisterRequest } from '@/src/entities/auth';
+import { User } from '@/src/entities/user';
 import { storage } from '@/lib/storage';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
@@ -19,12 +21,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
         const checkSession = async () => {
             try {
                 if (Platform.OS === 'web') {
-                    const { user } = await authApi.me();
+                    const { user } = await me();
                     setUser(user);
                 } else {
                     const token = await storage.getItem('session_token');
                     if (token) {
-                        const { user } = await authApi.me();
+                        const { user } = await me();
                         setUser(user);
                     }
                 }
@@ -43,7 +45,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     const signIn = async (data: LoginRequest) => {
         try {
-            const response = await authApi.login(data);
+            const response = await login(data);
             setUser(response.user);
             // Token is handled by axios interceptor
         } catch (error) {
@@ -53,7 +55,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     const signUp = async (data: RegisterRequest) => {
         try {
-            const response = await authApi.register(data);
+            const response = await register(data);
             setUser(response.user);
             // Token is handled by axios interceptor
         } catch (error) {
@@ -63,7 +65,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     const signOut = async () => {
         try {
-            await authApi.logout();
+            await logout();
             if (Platform.OS !== 'web') {
                 await storage.removeItem('session_token');
             }

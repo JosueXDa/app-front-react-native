@@ -25,91 +25,82 @@ const transformBetterAuthSession = (betterAuthSession: any): Session => ({
   userAgent: betterAuthSession.userAgent,
 });
 
-export const authApi = {
-  login: async (data: LoginRequest) => {
-    // Usar authClient.signIn.email según documentación de Better Auth
-    const response = await authClient.signIn.email({
-      email: data.email,
-      password: data.password,
-      rememberMe: true,
-    });
+export async function login(data: LoginRequest): Promise<AuthResponse> {
+  const { data: responseData, error } = await authClient.signIn.email({
+    email: data.email,
+    password: data.password,
+    rememberMe: true,
+  });
 
-    if (response.error) {
-      throw new Error(response.error.message || 'Login failed');
-    }
+  if (error) {
+    throw new Error(error.message || 'Login failed');
+  }
 
-    // Better Auth retorna: { redirect: boolean, token: string, url?: string, user: {...} }
-    if (!response.data?.user) {
-      throw new Error('No user data returned from login');
-    }
+  if (!responseData?.user) {
+    throw new Error('No user data returned from login');
+  }
 
-    return {
-      user: transformBetterAuthUser(response.data.user),
-      session: {
-        id: response.data.token || '',
-        userId: response.data.user.id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days default
-      } as Session,
-    } as AuthResponse;
-  },
+  return {
+    user: transformBetterAuthUser(responseData.user),
+    session: {
+      id: responseData.token || '',
+      userId: responseData.user.id,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    } as Session,
+  };
+}
 
-  register: async (data: RegisterRequest) => {
-    // Usar authClient.signUp.email según documentación de Better Auth
-    const response = await authClient.signUp.email({
-      email: data.email,
-      password: data.password,
-      name: data.name,
-    });
+export async function register(data: RegisterRequest): Promise<AuthResponse> {
+  const { data: responseData, error } = await authClient.signUp.email({
+    email: data.email,
+    password: data.password,
+    name: data.name,
+  });
 
-    if (response.error) {
-      throw new Error(response.error.message || 'Registration failed');
-    }
+  if (error) {
+    throw new Error(error.message || 'Registration failed');
+  }
 
-    if (!response.data?.user) {
-      throw new Error('No user data returned from registration');
-    }
+  if (!responseData?.user) {
+    throw new Error('No user data returned from registration');
+  }
 
-    return {
-      user: transformBetterAuthUser(response.data.user),
-      session: {
-        id: response.data.token || '',
-        userId: response.data.user.id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days default
-      } as Session,
-    } as AuthResponse;
-  },
+  return {
+    user: transformBetterAuthUser(responseData.user),
+    session: {
+      id: responseData.token || '',
+      userId: responseData.user.id,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    } as Session,
+  };
+}
 
-  me: async () => {
-    // Usar authClient.getSession() según documentación de Better Auth
-    const response = await authClient.getSession();
+export async function me(): Promise<AuthResponse> {
+  const { data: responseData, error } = await authClient.getSession();
 
-    if (response.error || !response.data?.user) {
-      throw new Error(response.error?.message || 'Failed to fetch session');
-    }
+  if (error || !responseData?.user) {
+    throw new Error(error?.message || 'Failed to fetch session');
+  }
 
-    return {
-      user: transformBetterAuthUser(response.data.user),
-      session: response.data.session
-        ? transformBetterAuthSession(response.data.session)
-        : ({
-            id: '',
-            userId: response.data.user.id,
-            expiresAt: new Date().toISOString(),
-          } as Session),
-    } as AuthResponse;
-  },
+  return {
+    user: transformBetterAuthUser(responseData.user),
+    session: responseData.session
+      ? transformBetterAuthSession(responseData.session)
+      : ({
+          id: '',
+          userId: responseData.user.id,
+          expiresAt: new Date().toISOString(),
+        } as Session),
+  };
+}
 
-  logout: async () => {
-    // Usar authClient.signOut() según documentación de Better Auth
-    await authClient.signOut();
-  },
+export async function logout(): Promise<void> {
+  await authClient.signOut();
+}
 
-  updateProfile: async (userId: string, updateData: UserUpdate) => {
-    // Para actualizar el perfil, usa authClient si Better Auth lo soporta,
-    // sino usa axios para el endpoint específico
-    const response = await axiosInstance.patch<any>(`/api/users/${userId}`, updateData);
-    return transformBetterAuthUser(response.data);
-  },
-};
+export async function updateProfile(userId: string, updateData: UserUpdate): Promise<User> {
+  const response = await axiosInstance.patch<any>(`/api/users/${userId}`, updateData);
+  return transformBetterAuthUser(response.data);
+}
 
 export type { AuthResponse, LoginRequest, RegisterRequest, UserUpdate };

@@ -5,7 +5,8 @@ import { HStack } from '@/components/ui/hstack';
 import { AlertCircleIcon, CheckCircleIcon, Icon } from '@/components/ui/icon';
 import { Input, InputField } from '@/components/ui/input';
 import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
-import { authApi, User } from '@/lib/api';
+import { updateProfile } from '@/src/entities/auth/api/auth.api';
+import { User } from '@/src/entities/user';
 import { uploadUserAvatar, uploadUserBanner } from '@/lib/api/upload';
 import React, { useState } from 'react';
 import { Image, ScrollView, Text, TextInput, View } from 'react-native';
@@ -104,7 +105,7 @@ export function MyAccountSection({ user, updateUser }: MyAccountSectionProps) {
       }
 
       // Call API to update profile
-      const updatedUser = await authApi.updateProfile(user.id, {
+      const updatedUser = await updateProfile(user.id, {
         profile: {
           displayName,
           bio: bio || null,

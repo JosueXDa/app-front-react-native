@@ -1,4 +1,5 @@
-import { LoginRequest, RegisterRequest, User } from '@/lib/api';
+import { LoginRequest, RegisterRequest } from '@/src/entities/auth';
+import { User } from '@/src/entities/user';
 
 export interface AuthContextType {
     user: User | null;
