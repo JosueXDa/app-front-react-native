@@ -21,9 +21,8 @@ import {
 } from '@/components/ui/modal';
 import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
 import { VStack } from '@/components/ui/vstack';
-import { createThread } from '@/src/entities/thread';
-import { useState } from 'react';
 import { Text } from 'react-native';
+import { useCreateThread } from '../model/useCreateThread';
 
 interface CreateThreadModalProps {
   isOpen: boolean;
@@ -38,99 +37,55 @@ export function CreateThreadModal({
   channelId,
   onThreadCreated,
 }: CreateThreadModalProps) {
-  const [threadName, setThreadName] = useState('');
-  const [threadDescription, setThreadDescription] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{
-    name?: string;
-    description?: string;
-  }>({});
-
   const toast = useToast();
 
-  const validateForm = () => {
-    const newErrors: typeof errors = {};
-
-    if (!threadName.trim()) {
-      newErrors.name = 'El nombre del hilo es requerido';
-    } else if (threadName.trim().length < 3) {
-      newErrors.name = 'El nombre debe tener al menos 3 caracteres';
-    } else if (threadName.trim().length > 100) {
-      newErrors.name = 'El nombre debe tener menos de 100 caracteres';
-    }
-
-    if (threadDescription && threadDescription.length > 500) {
-      newErrors.description = 'La descripción debe tener menos de 500 caracteres';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const showErrorToast = (message: string) => {
+    toast.show({
+      placement: 'top right',
+      render: ({ id }) => (
+        <Toast nativeID={`toast-${id}`} action="error" variant="outline">
+          <HStack space="sm">
+            <Icon as={AlertCircleIcon} className="mt-0.5" />
+            <ToastTitle>Error</ToastTitle>
+          </HStack>
+          <ToastDescription>{message}</ToastDescription>
+        </Toast>
+      ),
+    });
   };
 
-  const handleCreateThread = async () => {
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      await createThread({
-        channelId,
-        name: threadName.trim(),
-        description: threadDescription.trim() || undefined,
-      });
-
-      toast.show({
-        placement: 'top right',
-        render: ({ id }) => (
-          <Toast nativeID={`toast-${id}`} action="success" variant="outline">
-            <HStack space="sm">
-              <Icon as={CheckCircleIcon} className="mt-0.5" />
-              <ToastTitle>Éxito</ToastTitle>
-            </HStack>
-            <ToastDescription>{`Hilo "${threadName}" creado exitosamente!`}</ToastDescription>
-          </Toast>
-        ),
-      });
-
-      // Reset form
-      setThreadName('');
-      setThreadDescription('');
-      setErrors({});
-
-      // Notify parent component
-      onThreadCreated?.();
-
-      // Close modal
-      onClose();
-    } catch (error: any) {
-      console.error('Error creating thread:', error);
-      toast.show({
-        placement: 'top right',
-        render: ({ id }) => (
-          <Toast nativeID={`toast-${id}`} action="error" variant="outline">
-            <HStack space="sm">
-              <Icon as={AlertCircleIcon} className="mt-0.5" />
-              <ToastTitle>Error</ToastTitle>
-            </HStack>
-            <ToastDescription>
-              {error?.response?.data?.message ||
-                'Failed to create thread. Please try again.'}
-            </ToastDescription>
-          </Toast>
-        ),
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const showSuccessToast = (message: string) => {
+    toast.show({
+      placement: 'top right',
+      render: ({ id }) => (
+        <Toast nativeID={`toast-${id}`} action="success" variant="outline">
+          <HStack space="sm">
+            <Icon as={CheckCircleIcon} className="mt-0.5" />
+            <ToastTitle>Éxito</ToastTitle>
+          </HStack>
+          <ToastDescription>{message}</ToastDescription>
+        </Toast>
+      ),
+    });
   };
 
-  const handleClose = () => {
-    setThreadName('');
-    setThreadDescription('');
-    setErrors({});
-    onClose();
-  };
+  const {
+    threadName,
+    setThreadName,
+    threadDescription,
+    setThreadDescription,
+    isLoading,
+    errors,
+    setErrors,
+    handleCreateThread,
+    handleClose,
+  } = useCreateThread({
+    channelId,
+    onClose,
+    onThreadCreated,
+    onError: showErrorToast,
+    onSuccess: showSuccessToast,
+  });
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="md">
