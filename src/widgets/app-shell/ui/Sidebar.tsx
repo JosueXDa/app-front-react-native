@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { useChannels } from '@/context/ChannelContex';
-import { Channel } from '@/lib/api/chat';
+import { Channel } from '@/src/entities/channel';
+import { CreateChannelModal } from '@/src/features/channel/create-channel';
 import { useRouter } from 'expo-router';
 import { Compass, MessageCircle, Plus } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
-import { CreateChannelModal } from '../newChannel/CreateChannelModal';
 
 interface SidebarProps {
     selectedChannelId?: string;
@@ -36,18 +36,14 @@ export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
                 contentContainerStyle={{ paddingVertical: 16 }}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Action Buttons */}
                 <View className="items-center mb-4 border-b border-outline-200 pb-4">
-                    {/* mee button*/}
                     <Pressable
                         onPress={() => router.push('/channels/me')}
                         className="w-12 h-12 rounded-full bg-background-50 items-center justify-center active:opacity-70 mb-3"
                     >
                         <MessageCircle size={24} color="rgb(var(--color-typography-600))" />
                     </Pressable>
-                    
-                    
-                    {/* Explore Button */}
+
                     <Pressable
                         onPress={() => router.push('/explore')}
                         className="w-12 h-12 rounded-full bg-background-50 items-center justify-center active:opacity-70 mb-3"
@@ -55,7 +51,6 @@ export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
                         <Compass size={24} color="rgb(var(--color-typography-600))" />
                     </Pressable>
 
-                    {/* New Channel Button */}
                     <Pressable
                         onPress={() => setShowCreateModal(true)}
                         className="w-12 h-12 rounded-full bg-brand-500 items-center justify-center active:bg-brand-600 shadow-md shadow-brand-500/30"
@@ -64,7 +59,6 @@ export function Sidebar({ selectedChannelId, onSelectChannel }: SidebarProps) {
                     </Pressable>
                 </View>
 
-                {/* Channels List */}
                 {joinedChannels.length === 0 ? (
                     <View className="items-center justify-center py-8 px-2">
                         <Text className="text-xs text-typography-400 text-center">

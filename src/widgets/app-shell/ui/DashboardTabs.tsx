@@ -11,8 +11,12 @@ export function DashboardTabs() {
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
-                    backgroundColor: isDark ? 'rgb(var(--color-background-0))' : 'rgb(var(--color-background-0))',
-                    borderTopColor: isDark ? 'rgb(var(--color-outline-200))' : 'rgb(var(--color-outline-200))',
+                    backgroundColor: isDark
+                        ? 'rgb(var(--color-background-0))'
+                        : 'rgb(var(--color-background-0))',
+                    borderTopColor: isDark
+                        ? 'rgb(var(--color-outline-200))'
+                        : 'rgb(var(--color-outline-200))',
                 },
                 tabBarActiveTintColor: 'rgb(var(--color-brand-500))',
                 tabBarInactiveTintColor: 'rgb(var(--color-typography-400))',
@@ -32,7 +36,6 @@ export function DashboardTabs() {
                     tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
                 }}
             />
-            {/* Ocultar otras rutas en las tabs */}
             <Tabs.Screen
                 name="index"
                 options={{

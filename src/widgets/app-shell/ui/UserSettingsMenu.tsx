@@ -28,9 +28,7 @@ export function UserSettingsMenu({ children }: UserSettingsMenuProps) {
                     )}
                 </DropdownMenu.Trigger>
 
-                <DropdownMenu.Content
-                    className="bg-background-0 rounded-lg p-2 shadow-lg border border-outline-200"
-                >
+                <DropdownMenu.Content className="bg-background-0 rounded-lg p-2 shadow-lg border border-outline-200">
                     <DropdownMenu.Item
                         key="my-account"
                         onSelect={() => handleSelect('my-account')}
@@ -43,7 +41,6 @@ export function UserSettingsMenu({ children }: UserSettingsMenuProps) {
                 </DropdownMenu.Content>
             </DropdownMenu.Root>
 
-            {/* Modal */}
             <MyAccountModal
                 isOpen={activeModal === 'my-account'}
                 onClose={() => setActiveModal(null)}

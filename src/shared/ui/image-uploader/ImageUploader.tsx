@@ -7,13 +7,13 @@ import {
     FormControlHelper,
     FormControlHelperText,
     FormControlLabel,
-    FormControlLabelText
+    FormControlLabelText,
 } from '@/components/ui/form-control';
 import { HStack } from '@/components/ui/hstack';
-import { Icon, AlertCircleIcon, CloseIcon, AddIcon } from '@/components/ui/icon';
+import { AddIcon, AlertCircleIcon, CloseIcon, Icon } from '@/components/ui/icon';
 import { VStack } from '@/components/ui/vstack';
 import * as ImagePicker from 'expo-image-picker';
-import { Platform, Image, Text, TouchableOpacity } from 'react-native';
+import { Image, Platform, Text, TouchableOpacity } from 'react-native';
 
 export interface ImageFile {
     uri: string;
@@ -51,16 +51,16 @@ export function ImageUploader({
     onImageRemoved,
     error,
     disabled = false,
-    onError
+    onError,
 }: ImageUploaderProps) {
-    
     const pickImage = async () => {
         try {
-            // Request permission
             if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                const { status } =
+                    await ImagePicker.requestMediaLibraryPermissionsAsync();
                 if (status !== 'granted') {
-                    const errorMessage = 'Sorry, we need camera roll permissions to make this work!';
+                    const errorMessage =
+                        'Sorry, we need camera roll permissions to make this work!';
                     if (onError) {
                         onError(errorMessage);
                     }
@@ -68,7 +68,6 @@ export function ImageUploader({
                 }
             }
 
-            // Pick image
             const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
@@ -81,7 +80,10 @@ export function ImageUploader({
                 const imageFile: ImageFile = {
                     uri: asset.uri,
                     name: `${type}-${Date.now()}.jpg`,
-                    type: asset.type === 'image' ? 'image/jpeg' : asset.mimeType || 'image/jpeg'
+                    type:
+                        asset.type === 'image'
+                            ? 'image/jpeg'
+                            : asset.mimeType || 'image/jpeg',
                 };
 
                 onImageSelected(imageFile);
@@ -102,18 +104,19 @@ export function ImageUploader({
                 height: 80,
                 borderRadius: 40,
             };
-        } else {
-            return {
-                width: '100%' as const,
-                height: 120,
-                borderRadius: 8,
-            };
         }
+
+        return {
+            width: '100%' as const,
+            height: 120,
+            borderRadius: 8,
+        };
     };
 
-    const defaultHelperText = type === 'avatar'
-        ? 'Square image recommended. Max 5MB (JPG, PNG, GIF, WebP)'
-        : '16:9 aspect ratio recommended. Max 5MB (JPG, PNG, GIF, WebP)';
+    const defaultHelperText =
+        type === 'avatar'
+            ? 'Square image recommended. Max 5MB (JPG, PNG, GIF, WebP)'
+            : '16:9 aspect ratio recommended. Max 5MB (JPG, PNG, GIF, WebP)';
 
     const typeLabel = type === 'avatar' ? 'Avatar' : 'Banner';
 
@@ -194,9 +197,7 @@ export function ImageUploader({
             {error && (
                 <FormControlError className="mt-1">
                     <FormControlErrorIcon as={AlertCircleIcon} />
-                    <FormControlErrorText>
-                        {error}
-                    </FormControlErrorText>
+                    <FormControlErrorText>{error}</FormControlErrorText>
                 </FormControlError>
             )}
             <FormControlHelper className="mt-1">

@@ -1,8 +1,7 @@
-import { Sidebar } from '@/components/dashboard/Sidebar';
-import { UserBar } from '@/components/dashboard/UserBar';
+import { Sidebar, UserBar } from '@/src/widgets/app-shell';
 import { ChannelProvider } from '@/context/ChannelContex';
 import { SelectedChannelProvider, useSelectedChannel } from '@/context/SelectedChannelContext';
-import { Channel } from '@/lib/api/chat';
+import { Channel } from '@/src/entities/channel';
 import { Slot } from 'expo-router';
 import { View } from 'react-native';
 
