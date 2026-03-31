@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
-import { useChannels } from '@/src/app/providers/channel-provider';
+import { useChannels } from '@/src/app/providers';
 import { Channel } from '@/src/entities/channel';
 import { CreateChannelModal } from '@/src/features/channel/create-channel';
 import { useRouter } from 'expo-router';

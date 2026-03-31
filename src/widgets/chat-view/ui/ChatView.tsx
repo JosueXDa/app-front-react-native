@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
-import { useAuth } from '@/src/app/providers/auth-provider';
+import { useAuth } from '@/src/app/providers';
 import { Channel } from '@/src/entities/channel';
 import {
   AttachmentsList,

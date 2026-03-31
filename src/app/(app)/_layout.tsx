@@ -1,6 +1,6 @@
 import { Sidebar, UserBar } from '@/src/widgets/app-shell';
-import { ChannelProvider } from '@/src/app/providers/channel-provider';
-import { SelectedChannelProvider, useSelectedChannel } from '@/src/app/providers/selected-channel-provider';
+import { ChannelProvider } from '@/src/app/providers';
+import { SelectedChannelProvider, useSelectedChannel } from '@/src/app/providers';
 import { Channel } from '@/src/entities/channel';
 import { Slot } from 'expo-router';
 import { View } from 'react-native';

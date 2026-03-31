@@ -247,7 +247,7 @@ function MyComponent() {
 El sistema ahora soporta cambio de tema con persistencia:
 
 ```tsx
-import { useTheme } from '@/src/app/providers/theme-provider';
+import { useTheme } from '@/src/app/providers';
 
 function MyComponent() {
   const { resolvedTheme, toggleTheme, themeMode } = useTheme();
