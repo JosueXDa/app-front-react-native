@@ -7,7 +7,7 @@ import {
     ModalContent,
     ModalHeader,
 } from '@/components/ui/modal';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/src/app/providers/auth-provider';
 import { User, X } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';

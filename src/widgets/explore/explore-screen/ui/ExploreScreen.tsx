@@ -1,5 +1,5 @@
 import { Grid, GridItem } from '@/components/ui/grid';
-import { useChannels } from '@/context/ChannelContex';
+import { useChannels } from '@/src/app/providers/channel-provider';
 import { ChannelGridCard } from '@/src/entities/channel';
 import { useExploreChannels } from '@/src/features/explore/channel-feed';
 import { ChannelDetailModal } from '@/src/features/explore/join-channel';

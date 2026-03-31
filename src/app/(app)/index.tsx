@@ -1,4 +1,4 @@
-import { useSelectedChannel } from '@/context/SelectedChannelContext';
+import { useSelectedChannel } from '@/src/app/providers/selected-channel-provider';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Text, View, useWindowDimensions } from 'react-native';

@@ -1,7 +1,7 @@
 import { HStack } from "@/components/ui/hstack";
 import { AlertCircleIcon, Icon } from "@/components/ui/icon";
 import { Toast, ToastDescription, ToastTitle, useToast } from "@/components/ui/toast";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/src/app/providers/auth-provider";
 import { useCallback, useState } from "react";
 
 type  UseRegisterReturn = {

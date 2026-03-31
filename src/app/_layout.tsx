@@ -7,9 +7,9 @@ import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
-import { AuthProvider, useAuth } from '@/context/AuthContext';
-import { ThemeProvider, useTheme } from '@/context/ThemeContext';
-import '@/global.css';
+import { AuthProvider, useAuth } from '@/src/app/providers/auth-provider';
+import { ThemeProvider, useTheme } from '@/src/app/providers/theme-provider';
+import '@/src/app/styles/global.css';
 
 export const unstable_settings = {
   anchor: '(app)',

@@ -1,4 +1,4 @@
-import { useSelectedChannel } from '@/context/SelectedChannelContext';
+import { useSelectedChannel } from '@/src/app/providers/selected-channel-provider';
 import { Channel, getChannelById } from '@/src/entities/channel';
 import { getThreadById, Thread } from '@/src/entities/thread';
 import { ChatView } from '@/src/widgets/chat-view';

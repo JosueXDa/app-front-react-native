@@ -7,7 +7,7 @@ import {
     ModalContent,
     ModalFooter,
 } from '@/components/ui/modal';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/src/app/providers/auth-provider';
 import { User } from '@/src/entities/user';
 import { LogOut, X } from 'lucide-react-native';
 import React from 'react';

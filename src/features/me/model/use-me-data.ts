@@ -1,5 +1,5 @@
-import { useAuth } from '@/context/AuthContext';
-import { useChannels } from '@/context/ChannelContex';
+import { useAuth } from '@/src/app/providers/auth-provider';
+import { useChannels } from '@/src/app/providers/channel-provider';
 
 export const useMeData = () => {
   const { user } = useAuth();

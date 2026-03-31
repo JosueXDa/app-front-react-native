@@ -1,4 +1,4 @@
-import { useChannels } from '@/context/ChannelContex';
+import { useChannels } from '@/src/app/providers/channel-provider';
 import { uploadChannelBanner, uploadChannelIcon } from '@/lib/api/upload';
 import { createChannel } from '@/src/entities/channel';
 import { ImageFile } from '@/src/shared/ui/image-uploader';

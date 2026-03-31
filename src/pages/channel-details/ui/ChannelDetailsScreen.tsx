@@ -1,5 +1,5 @@
-import { useAuth } from '@/context/AuthContext';
-import { useSelectedChannel } from '@/context/SelectedChannelContext';
+import { useAuth } from '@/src/app/providers/auth-provider';
+import { useSelectedChannel } from '@/src/app/providers/selected-channel-provider';
 import {
   Channel,
   ChannelInfo,

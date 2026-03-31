@@ -1,29 +1,32 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme as useDeviceColorScheme } from 'react-native';
-import { ResolvedTheme, ThemeContextType, ThemeMode, ThemeProviderProps } from './interface/ThemeContext';
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export type ThemeMode = 'light' | 'dark' | 'system';
+export type ResolvedTheme = 'light' | 'dark';
 
+interface ThemeContextValue {
+  themeMode: ThemeMode;
+  resolvedTheme: ResolvedTheme;
+  setThemeMode: (mode: ThemeMode) => Promise<void>;
+  toggleTheme: () => Promise<void>;
+  isLoading: boolean;
+}
+
+const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 const THEME_STORAGE_KEY = '@app:theme';
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
+export function ThemeProvider({ children }: PropsWithChildren) {
   const deviceColorScheme = useDeviceColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Calculate resolved theme based on mode and device preference
-  const resolvedTheme: ResolvedTheme = 
-    themeMode === 'system' 
-      ? (deviceColorScheme ?? 'light')
-      : themeMode;
+  const resolvedTheme: ResolvedTheme = themeMode === 'system' ? (deviceColorScheme ?? 'light') : themeMode;
 
-  // Load theme from storage on mount
   useEffect(() => {
     loadTheme();
   }, []);
 
-  // Update when device color scheme changes (if in system mode)
   useEffect(() => {
     if (themeMode === 'system') {
       // Force re-render when device theme changes
@@ -57,7 +60,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     await setThemeMode(newMode);
   };
 
-  const value: ThemeContextType = {
+  const value: ThemeContextValue = {
     themeMode,
     resolvedTheme,
     setThemeMode,
@@ -65,14 +68,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     isLoading,
   };
 
-  return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
-export function useTheme(): ThemeContextType {
+export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');

@@ -1,5 +1,5 @@
-import { useAuth } from '@/context/AuthContext';
-import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/src/app/providers/auth-provider';
+import { useTheme } from '@/src/app/providers/theme-provider';
 import type { ProfileUser } from '@/src/entities/profile';
 import { useRouter } from 'expo-router';
 import { useCallback, useMemo } from 'react';
