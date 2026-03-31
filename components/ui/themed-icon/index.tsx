@@ -1,4 +1,4 @@
-import { ColorVariant, useIconColor } from '@/lib/theme-utils';
+import { ColorVariant, useIconColor } from '@/src/shared/theme';
 import { LucideIcon } from 'lucide-react-native';
 import React from 'react';
 

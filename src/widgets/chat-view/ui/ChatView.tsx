@@ -7,10 +7,10 @@ import {
   getMessagesByThread,
   Message,
   MessageAttachment,
+  wsManager,
 } from '@/src/entities/message';
 import { Thread } from '@/src/entities/thread';
 import { ChatInput } from '@/src/features/chat/send-message';
-import { wsManager } from '@/lib/api/ws';
 import { ArrowLeft, MoreVertical } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
@@ -193,6 +193,7 @@ export function ChatView({
 
     const originalMessage = content.trim();
     const tempId = `temp-${Date.now()}`;
+    const senderName = user.name ?? user.email;
 
     const tempMessage: Message = {
       id: tempId,
@@ -203,9 +204,9 @@ export function ChatView({
       createdAt: new Date().toISOString(),
       sender: {
         id: user.id,
-        name: user.name,
+        name: senderName,
         profile: {
-          displayName: user.profile?.displayName || user.name,
+          displayName: user.profile?.displayName || senderName,
           avatarUrl: user.profile?.avatarUrl || null,
         },
       },

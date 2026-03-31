@@ -4,7 +4,7 @@ import {
   uploadMessageAudio,
   uploadMessageImage,
   uploadMessageVideo,
-} from '@/lib/api/upload';
+} from '@/src/entities/upload';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { uploadChannelBanner, uploadChannelIcon } from '@/lib/api/upload';
 import { Channel, updateChannel } from '@/src/entities/channel';
+import { uploadChannelBanner, uploadChannelIcon } from '@/src/entities/upload';
 import { ImageFile } from '@/src/shared/ui/image-uploader';
 
 interface UseEditChannelProps {

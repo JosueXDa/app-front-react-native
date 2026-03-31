@@ -1,7 +1,7 @@
 import { LoginRequest, RegisterRequest } from '@/src/entities/auth';
 import { login, logout, me, register } from '@/src/entities/auth/api/auth.api';
+import { sessionStorage } from '@/src/entities/session';
 import { User } from '@/src/entities/user';
-import { storage } from '@/lib/storage';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           const { user } = await me();
           setUser(user);
         } else {
-          const token = await storage.getItem('session_token');
+          const token = await sessionStorage.getItem('session_token');
           if (token) {
             const { user } = await me();
             setUser(user);
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       } catch (error) {
         console.error('Session check failed:', error);
         if (Platform.OS !== 'web') {
-          await storage.removeItem('session_token');
+          await sessionStorage.removeItem('session_token');
         }
       } finally {
         setIsLoading(false);
@@ -78,14 +78,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     try {
       await logout();
       if (Platform.OS !== 'web') {
-        await storage.removeItem('session_token');
+        await sessionStorage.removeItem('session_token');
       }
       setUser(null);
     } catch (error) {
       console.error('Sign out failed:', error);
       // Force logout even if api fails
       if (Platform.OS !== 'web') {
-        await storage.removeItem('session_token');
+        await sessionStorage.removeItem('session_token');
       }
       setUser(null);
     }

@@ -1,6 +1,6 @@
 import { useChannels } from '@/src/app/providers';
-import { uploadChannelBanner, uploadChannelIcon } from '@/lib/api/upload';
 import { createChannel } from '@/src/entities/channel';
+import { uploadChannelBanner, uploadChannelIcon } from '@/src/entities/upload';
 import { ImageFile } from '@/src/shared/ui/image-uploader';
 import { useState } from 'react';
 
